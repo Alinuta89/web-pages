@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Science 7 — Mission Control</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,200,0,0" rel="stylesheet">
+<style>
+:root {
+  --deep-navy: #0B1F33;
+  --midnight-blue: #102A43;
+  --teal-core: #0FB9B1;
+  --aqua-light: #4FD1C5;
+  --slate-blue: #1E3A5F;
+  --white: #FFFFFF;
+  --near-black: #0A0A0A;
+  --correct-green: #22c55e;
+  --wrong-red: #ef4444;
+  --bg-subtle: #F0F4F8;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Lato', sans-serif;
+  background: var(--bg-subtle);
+  color: var(--near-black);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* === HERO / TITLE SCREEN === */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; flex-direction: column; }
+
+#title-screen {
+  background: linear-gradient(135deg, var(--deep-navy) 0%, var(--slate-blue) 50%, var(--teal-core) 100%);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  gap: 1.5rem;
+}
+
+#title-screen .badge {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: rgba(15,185,177,0.15);
+  border: 2px solid var(--teal-core);
+  display: flex; align-items: center; justify-content: center;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(15,185,177,0.3); }
+  50% { transform: scale(1.05); box-shadow: 0 0 20px 5px rgba(15,185,177,0.15); }
+}
+
+#title-screen .badge .material-symbols-outlined { font-size: 36px; color: var(--teal-core); }
+
+#title-screen h1 {
+  font-weight: 700;
+  font-size: 2rem;
+  color: var(--white);
+  line-height: 1.2;
+}
+
+#title-screen .subtitle {
+  font-weight: 300;
+  font-size: 1rem;
+  color: var(--aqua-light);
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+#title-screen .start-btn {
+  margin-top: 1rem;
+  padding: 14px 40px;
+  background: var(--teal-core);
+  color: var(--deep-navy);
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+
+#title-screen .start-btn:hover {
+  background: var(--aqua-light);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(15,185,177,0.3);
+}
+
+/* === GAME SCREEN === */
+#game-screen {
+  background: var(--bg-subtle);
+}
+
+.game-header {
+  background: var(--deep-navy);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.game-header .phase-label {
+  font-weight: 300;
+  font-size: 0.8rem;
+  color: var(--aqua-light);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.game-header .topic-tag {
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: var(--white);
+  background: var(--slate-blue);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.progress-bar-container {
+  background: var(--midnight-blue);
+  height: 4px;
+  width: 100%;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(to right, var(--teal-core), var(--aqua-light));
+  transition: width 0.4s ease;
+  width: 0%;
+}
+
+.question-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.5rem;
+  max-width: 640px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.question-number {
+  font-weight: 300;
+  font-size: 0.8rem;
+  color: var(--slate-blue);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.75rem;
+}
+
+.question-text {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--deep-navy);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.question-context {
+  font-weight: 300;
+  font-size: 0.9rem;
+  color: var(--slate-blue);
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+  padding-left: 12px;
+  border-left: 3px solid var(--aqua-light);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.option-btn {
+  padding: 14px 18px;
+  background: var(--white);
+  border: 2px solid #E5E7EB;
+  border-radius: 10px;
+  font-family: 'Lato', sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  color: var(--near-black);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.option-btn:hover:not(.disabled) {
+  border-color: var(--teal-core);
+  background: rgba(15,185,177,0.04);
+  transform: translateX(4px);
+}
+
+.option-btn.correct {
+  border-color: var(--correct-green);
+  background: rgba(34,197,94,0.08);
+  color: #166534;
+}
+
+.option-btn.wrong {
+  border-color: var(--wrong-red);
+  background: rgba(239,68,68,0.06);
+  color: #991b1b;
+}
+
+.option-btn.disabled { pointer-events: none; }
+
+.option-btn.reveal-correct {
+  border-color: var(--correct-green);
+  background: rgba(34,197,94,0.06);
+}
+
+.feedback-area {
+  margin-top: 1.25rem;
+  padding: 14px 16px;
+  border-radius: 10px;
+  font-weight: 400;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  display: none;
+}
+
+.feedback-area.show { display: block; }
+
+.feedback-area.correct-fb {
+  background: rgba(34,197,94,0.08);
+  border: 1px solid rgba(34,197,94,0.2);
+  color: #166534;
+}
+
+.feedback-area.wrong-fb {
+  background: rgba(239,68,68,0.06);
+  border: 1px solid rgba(239,68,68,0.15);
+  color: #991b1b;
+}
+
+.next-btn {
+  margin-top: 1.5rem;
+  padding: 12px 28px;
+  background: var(--deep-navy);
+  color: var(--white);
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: flex-end;
+  display: none;
+}
+
+.next-btn.show { display: inline-block; }
+.next-btn:hover { background: var(--slate-blue); }
+
+/* === PHASE TRANSITION === */
+.phase-transition {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--deep-navy), var(--midnight-blue));
+}
+
+.phase-transition.active { display: flex; }
+
+.phase-transition h2 {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--white);
+}
+
+.phase-transition p {
+  font-weight: 300;
+  color: var(--aqua-light);
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+/* === RESULTS SCREEN === */
+#results-screen {
+  background: var(--bg-subtle);
+  padding: 0;
+}
+
+.results-header {
+  background: linear-gradient(135deg, var(--deep-navy), var(--slate-blue));
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.results-header h2 {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--white);
+  margin-bottom: 0.25rem;
+}
+
+.results-header .total-score {
+  font-weight: 300;
+  font-size: 1rem;
+  color: var(--aqua-light);
+}
+
+.results-body {
+  padding: 1.5rem;
+  max-width: 640px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.results-body h3 {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--deep-navy);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--teal-core);
+}
+
+.topic-result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.topic-result:last-child { border-bottom: none; }
+
+.topic-result .label {
+  font-weight: 400;
+  font-size: 0.95rem;
+  color: var(--near-black);
+  flex: 1;
+}
+
+.topic-result .score-bar-wrap {
+  width: 120px;
+  height: 8px;
+  background: #E5E7EB;
+  border-radius: 4px;
+  margin: 0 12px;
+  overflow: hidden;
+}
+
+.topic-result .score-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.topic-result .score-text {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--slate-blue);
+  min-width: 44px;
+  text-align: right;
+}
+
+.status-tag {
+  display: inline-block;
+  font-weight: 400;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 8px;
+}
+
+.status-tag.strong { background: rgba(34,197,94,0.1); color: #166534; }
+.status-tag.okay { background: rgba(79,209,197,0.15); color: var(--slate-blue); }
+.status-tag.gap { background: rgba(239,68,68,0.08); color: #991b1b; }
+
+.parent-note {
+  margin-top: 2rem;
+  padding: 16px;
+  background: var(--white);
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+}
+
+.parent-note h4 {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--deep-navy);
+  margin-bottom: 0.5rem;
+}
+
+.parent-note p, .parent-note li {
+  font-weight: 300;
+  font-size: 0.85rem;
+  color: var(--slate-blue);
+  line-height: 1.6;
+}
+
+.parent-note ul {
+  margin-top: 0.5rem;
+  padding-left: 1.25rem;
+}
+
+.parent-note li { margin-bottom: 0.35rem; }
+
+.restart-btn {
+  margin-top: 2rem;
+  padding: 12px 28px;
+  background: var(--teal-core);
+  color: var(--deep-navy);
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2rem;
+}
+
+.restart-btn:hover { background: var(--aqua-light); }
+
+/* Timer bar */
+.timer-bar-container {
+  height: 3px;
+  background: rgba(0,0,0,0.06);
+  margin-top: 0.75rem;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.timer-bar {
+  height: 100%;
+  background: var(--teal-core);
+  width: 100%;
+  transition: width linear;
+}
+
+.timer-bar.warning { background: var(--wrong-red); }
+</style>
+</head>
+<body>
+
+<!-- TITLE SCREEN -->
+<div id="title-screen" class="screen active">
+  <div class="badge">
+    <span class="material-symbols-outlined">rocket_launch</span>
+  </div>
+  <h1>Science 7<br>Mission Control</h1>
+  <p class="subtitle">15 questions. Two phases. Find out what you know — and what needs work. Ready?</p>
+  <button class="start-btn" onclick="startGame()">Launch Mission</button>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="game-screen" class="screen">
+  <div class="game-header">
+    <span class="phase-label" id="phase-label">Phase 1 — Diagnostic</span>
+    <span class="topic-tag" id="topic-tag">Ecosystems</span>
+  </div>
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+  <div class="question-area">
+    <div class="question-number" id="q-number">Question 1 of 15</div>
+    <div class="question-text" id="q-text"></div>
+    <div class="question-context" id="q-context" style="display:none;"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback-area" id="feedback"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next →</button>
+  </div>
+</div>
+
+<!-- PHASE TRANSITION -->
+<div id="phase-transition" class="phase-transition">
+  <div class="badge">
+    <span class="material-symbols-outlined">local_fire_department</span>
+  </div>
+  <h2>Phase 2 — Heat Transfer</h2>
+  <p>Nice work on the diagnostic. Now let's lock in on what you're learning right now: how heat moves through the world around you.</p>
+  <button class="start-btn" onclick="startPhase2()">Let's Go</button>
+</div>
+
+<!-- RESULTS -->
+<div id="results-screen" class="screen">
+  <div class="results-header">
+    <h2>Mission Complete</h2>
+    <div class="total-score" id="total-score"></div>
+  </div>
+  <div class="results-body" id="results-body"></div>
+</div>
+
+<script>
+const QUESTIONS = [
+  // === PHASE 1: DIAGNOSTIC (9 questions across prior units) ===
+  // Ecosystems (3)
+  {
+    phase: 1,
+    topic: "Ecosystems",
+    topicKey: "eco",
+    text: "In a food chain, where does ALL the energy originally come from?",
+    options: ["Decomposers", "The sun", "Water", "Soil nutrients"],
+    correct: 1,
+    feedback_right: "Every food chain starts with the sun. Plants capture that solar energy through photosynthesis.",
+    feedback_wrong: "It's the sun. Plants capture solar energy through photosynthesis — that's the starting point of every food chain."
+  },
+  {
+    phase: 1,
+    topic: "Ecosystems",
+    topicKey: "eco",
+    text: "DDT is a pesticide that builds up in animals at higher levels of the food chain. What is this process called?",
+    options: ["Ecological succession", "Bioaccumulation", "Decomposition", "Photosynthesis"],
+    correct: 1,
+    feedback_right: "Bioaccumulation — toxins concentrate more and more as you move up the food chain.",
+    feedback_wrong: "That's bioaccumulation. Each predator absorbs the toxins from everything it eats, so concentrations increase up the chain."
+  },
+  {
+    phase: 1,
+    topic: "Ecosystems",
+    topicKey: "eco",
+    text: "A forest burns down but the soil is still intact. New plants start growing within weeks. What type of succession is this?",
+    options: ["Primary succession", "Secondary succession", "Bioaccumulation", "Ecological monitoring"],
+    correct: 1,
+    feedback_right: "Secondary succession — the soil is already there, so recovery is much faster than starting from bare rock.",
+    feedback_wrong: "Secondary succession. The key clue: soil is still intact. Primary succession starts from bare rock with no soil at all."
+  },
+  // Structures & Forces (3)
+  {
+    phase: 1,
+    topic: "Structures",
+    topicKey: "struct",
+    text: "An egg is a great example of what type of structure?",
+    options: ["Frame structure", "Mass structure", "Shell structure", "Composite structure"],
+    correct: 2,
+    feedback_right: "A shell structure — strong thin outer layer that protects what's inside.",
+    feedback_wrong: "An egg is a shell structure. Its strength comes from that thin, curved outer layer."
+  },
+  {
+    phase: 1,
+    topic: "Structures",
+    topicKey: "struct",
+    text: "You're wringing water out of a towel by twisting it. What internal force are you applying?",
+    options: ["Compression", "Tension", "Torsion", "Shear"],
+    correct: 2,
+    feedback_right: "Torsion — twisting a material by turning its ends in opposite directions.",
+    feedback_wrong: "That's torsion. You're twisting the towel by rotating the ends in opposite directions."
+  },
+  {
+    phase: 1,
+    topic: "Structures",
+    topicKey: "struct",
+    text: "A cathedral has supports that arch from the walls down to the ground on the outside. These are called:",
+    options: ["Cantilevers", "Gyroscopes", "Flying buttresses", "Footings"],
+    correct: 2,
+    feedback_right: "Flying buttresses — external arched supports that transfer wall weight to the ground.",
+    feedback_wrong: "Flying buttresses. They're those dramatic arched supports on the outside of Gothic cathedrals."
+  },
+  // Heat & Temp foundations (3)
+  {
+    phase: 1,
+    topic: "Heat Foundations",
+    topicKey: "heat_base",
+    text: "Temperature measures the average _____ of particles in a substance.",
+    options: ["Size", "Kinetic energy (movement)", "Weight", "Number"],
+    correct: 1,
+    feedback_right: "Temperature = average kinetic energy of particles. Faster-moving particles = higher temperature.",
+    feedback_wrong: "Temperature measures average kinetic energy — how fast the particles are moving. More movement = higher temperature."
+  },
+  {
+    phase: 1,
+    topic: "Heat Foundations",
+    topicKey: "heat_base",
+    text: "According to the particle model of matter, what happens when you add heat to a substance?",
+    options: ["Particles get bigger", "Particles move faster", "Particles multiply", "Particles stop moving"],
+    correct: 1,
+    feedback_right: "Adding heat = particles move faster. That's the core idea behind expansion.",
+    feedback_wrong: "Heat makes particles move faster — not bigger, not more. The particles themselves stay the same size, they just vibrate and move with more energy."
+  },
+  {
+    phase: 1,
+    topic: "Heat Foundations",
+    topicKey: "heat_base",
+    text: "Heat ALWAYS flows in one direction. Which way?",
+    options: ["Cold to hot", "Hot to cold", "It flows both ways equally", "Depends on the material"],
+    correct: 1,
+    feedback_right: "Always hot to cold. Every single time. That's why your hot coffee cools down in a cold room, not the other way around.",
+    feedback_wrong: "Hot to cold — always. Your hot drink cools down because heat flows out of it into the cooler air, never the reverse."
+  },
+
+  // === PHASE 2: HEAT TRANSFER (6 questions) ===
+  {
+    phase: 2,
+    topic: "Heat Transfer",
+    topicKey: "heat_transfer",
+    text: "You put a metal spoon in hot soup. After a minute, the handle feels warm. What type of heat transfer is this?",
+    context: "Think about whether heat is moving through direct contact, moving fluid, or invisible waves.",
+    options: ["Convection", "Radiation", "Conduction", "Expansion"],
+    correct: 2,
+    feedback_right: "Conduction — heat travels through the metal by direct particle-to-particle contact from the hot end to the cool end.",
+    feedback_wrong: "That's conduction. The heat moves through the metal from particle to particle. Direct contact = conduction."
+  },
+  {
+    phase: 2,
+    topic: "Heat Transfer",
+    topicKey: "heat_transfer",
+    text: "A pot of water is boiling. Hot water rises to the top while cooler water sinks. What type of heat transfer creates this circular current?",
+    context: "The key here is that a fluid (liquid or gas) is moving in a cycle.",
+    options: ["Conduction", "Convection", "Radiation", "Contraction"],
+    correct: 1,
+    feedback_right: "Convection — heat moves through the moving liquid. Hot rises, cool sinks, creating a convection current.",
+    feedback_wrong: "Convection. When a liquid or gas moves in a cycle (hot rises, cool sinks), that circulation is a convection current."
+  },
+  {
+    phase: 2,
+    topic: "Heat Transfer",
+    topicKey: "heat_transfer",
+    text: "You're sitting near a campfire. You can feel the heat on your face even though you're not touching the flames and there's no wind. How is the heat reaching you?",
+    context: "No contact. No moving fluid. The heat crosses empty space.",
+    options: ["Conduction", "Convection", "Radiation", "Compression"],
+    correct: 2,
+    feedback_right: "Radiation — heat travels as invisible waves through the air (or even through empty space, like sunlight).",
+    feedback_wrong: "Radiation. The heat travels as electromagnetic waves — no contact needed, no fluid needed. Same way the sun heats the Earth across millions of kilometres of vacuum."
+  },
+  {
+    phase: 2,
+    topic: "Heat Transfer",
+    topicKey: "heat_transfer",
+    text: "Engineers leave small gaps (expansion joints) in bridges and sidewalks. Why?",
+    context: "Think about what happens to particles when temperature changes.",
+    options: [
+      "To let water drain through",
+      "Materials expand when heated and would crack without room to grow",
+      "To reduce the weight of the structure",
+      "To make the bridge more flexible in wind"
+    ],
+    correct: 1,
+    feedback_right: "When materials heat up, particles move faster and spread out — expansion. Without gaps, the expanding concrete would buckle or crack.",
+    feedback_wrong: "It's about expansion. Heat makes particles move faster and spread apart, so the material expands. Without those gaps, the bridge would crack or buckle on a hot day."
+  },
+  {
+    phase: 2,
+    topic: "Heat Transfer",
+    topicKey: "heat_transfer",
+    text: "Your thermometer reading goes DOWN when you dip it in cold water. What's physically happening to the liquid inside the tube?",
+    options: [
+      "The liquid is evaporating",
+      "The liquid particles slow down and move closer together (contraction)",
+      "The glass tube is expanding",
+      "Cold pushes the liquid down"
+    ],
+    correct: 1,
+    feedback_right: "Contraction. The cold water drains energy from the liquid's particles — they slow down and pack closer together, so the liquid level drops.",
+    feedback_wrong: "It's contraction. Cold = less energy = particles slow down and move closer. The liquid takes up less space, so it drops in the tube."
+  },
+  {
+    phase: 2,
+    topic: "Heat Transfer",
+    topicKey: "heat_transfer",
+    text: "Which one of these is the BEST example of convection?",
+    context: "Remember: convection requires a moving fluid (liquid or gas) carrying heat.",
+    options: [
+      "Touching a hot pan and burning your hand",
+      "Feeling the sun's warmth on your skin",
+      "A hot air balloon rising because warm air is lighter",
+      "A metal rod getting hot at one end when the other end is in a flame"
+    ],
+    correct: 2,
+    feedback_right: "The hot air balloon! Warm air rises (it's less dense), cool air sinks — that's a convection current in action.",
+    feedback_wrong: "The hot air balloon. Warm air rises because it's less dense, and cool air sinks to replace it — classic convection current. Touching a hot pan = conduction. Feeling the sun = radiation. Hot metal rod = conduction."
+  }
+];
+
+// State
+let currentIndex = 0;
+let scores = { eco: {right:0, total:0}, struct: {right:0, total:0}, heat_base: {right:0, total:0}, heat_transfer: {right:0, total:0} };
+let answered = false;
+
+function showScreen(id) {
+  document.querySelectorAll('.screen, .phase-transition').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startGame() {
+  currentIndex = 0;
+  scores = { eco: {right:0, total:0}, struct: {right:0, total:0}, heat_base: {right:0, total:0}, heat_transfer: {right:0, total:0} };
+  showScreen('game-screen');
+  renderQuestion();
+}
+
+function startPhase2() {
+  showScreen('game-screen');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentIndex];
+  answered = false;
+
+  document.getElementById('phase-label').textContent = q.phase === 1 ? 'Phase 1 — Diagnostic Sweep' : 'Phase 2 — Heat Transfer';
+  document.getElementById('topic-tag').textContent = q.topic;
+  document.getElementById('q-number').textContent = `Question ${currentIndex + 1} of ${QUESTIONS.length}`;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('progress-bar').style.width = ((currentIndex) / QUESTIONS.length * 100) + '%';
+
+  const ctx = document.getElementById('q-context');
+  if (q.context) {
+    ctx.textContent = q.context;
+    ctx.style.display = 'block';
+  } else {
+    ctx.style.display = 'none';
+  }
+
+  const optionsEl = document.getElementById('options');
+  optionsEl.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.onclick = () => handleAnswer(i);
+    optionsEl.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback-area';
+  fb.style.display = 'none';
+  fb.textContent = '';
+
+  document.getElementById('next-btn').classList.remove('show');
+}
+
+function handleAnswer(selected) {
+  if (answered) return;
+  answered = true;
+
+  const q = QUESTIONS[currentIndex];
+  const isCorrect = selected === q.correct;
+  const btns = document.querySelectorAll('.option-btn');
+
+  scores[q.topicKey].total++;
+  if (isCorrect) scores[q.topicKey].right++;
+
+  btns.forEach((btn, i) => {
+    btn.classList.add('disabled');
+    if (i === q.correct) btn.classList.add('correct');
+    if (i === selected && !isCorrect) btn.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.textContent = isCorrect ? q.feedback_right : q.feedback_wrong;
+  fb.className = 'feedback-area show ' + (isCorrect ? 'correct-fb' : 'wrong-fb');
+
+  document.getElementById('next-btn').classList.add('show');
+}
+
+function nextQuestion() {
+  currentIndex++;
+
+  if (currentIndex >= QUESTIONS.length) {
+    showResults();
+    return;
+  }
+
+  // Check for phase transition (after question 9, index 8 → 9)
+  const prevPhase = QUESTIONS[currentIndex - 1].phase;
+  const nextPhase = QUESTIONS[currentIndex].phase;
+
+  if (prevPhase === 1 && nextPhase === 2) {
+    showScreen('phase-transition');
+    return;
+  }
+
+  renderQuestion();
+}
+
+function showResults() {
+  showScreen('results-screen');
+  document.getElementById('progress-bar').style.width = '100%';
+
+  const totalRight = Object.values(scores).reduce((s, t) => s + t.right, 0);
+  const totalQ = Object.values(scores).reduce((s, t) => s + t.total, 0);
+  document.getElementById('total-score').textContent = `${totalRight} out of ${totalQ} correct`;
+
+  const topics = [
+    { key: 'eco', label: 'Ecosystems & Interactions', icon: 'eco' },
+    { key: 'struct', label: 'Structures & Forces', icon: 'architecture' },
+    { key: 'heat_base', label: 'Heat Foundations (Particles & Temperature)', icon: 'thermostat' },
+    { key: 'heat_transfer', label: 'Heat Transfer (Current Material)', icon: 'local_fire_department' }
+  ];
+
+  let html = '<h3>Results by Topic</h3>';
+
+  const gaps = [];
+  const strengths = [];
+
+  topics.forEach(t => {
+    const s = scores[t.key];
+    const pct = s.total > 0 ? Math.round(s.right / s.total * 100) : 0;
+    let status, statusClass, barColor;
+
+    if (pct >= 80) {
+      status = 'Strong';
+      statusClass = 'strong';
+      barColor = 'var(--correct-green)';
+      strengths.push(t.label);
+    } else if (pct >= 50) {
+      status = 'Review';
+      statusClass = 'okay';
+      barColor = 'var(--teal-core)';
+      gaps.push(t.label + ' (partial gaps)');
+    } else {
+      status = 'Needs work';
+      statusClass = 'gap';
+      barColor = 'var(--wrong-red)';
+      gaps.push(t.label);
+    }
+
+    html += `
+      <div class="topic-result">
+        <span class="label">${t.label}<span class="status-tag ${statusClass}">${status}</span></span>
+        <div class="score-bar-wrap">
+          <div class="score-bar-fill" style="width:${pct}%; background:${barColor};"></div>
+        </div>
+        <span class="score-text">${s.right}/${s.total}</span>
+      </div>
+    `;
+  });
+
+  html += '<div class="parent-note"><h4>For Parents</h4>';
+  if (gaps.length > 0) {
+    html += '<p>Areas to revisit:</p><ul>';
+    gaps.forEach(g => html += `<li>${g}</li>`);
+    html += '</ul>';
+  }
+  if (strengths.length > 0) {
+    html += '<p style="margin-top:0.75rem;">Looking solid in:</p><ul>';
+    strengths.forEach(g => html += `<li>${g}</li>`);
+    html += '</ul>';
+  }
+  html += '<p style="margin-top:0.75rem;">Each wrong answer included an explanation, so even missed questions became a mini-lesson. You can re-run this anytime to check progress.</p>';
+  html += '</div>';
+
+  html += '<button class="restart-btn" onclick="startGame()">Run It Again</button>';
+
+  document.getElementById('results-body').innerHTML = html;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les guerres au Canada — Speed Run</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,200,0,0" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --deep-navy: #0B1F33;
+  --midnight-blue: #102A43;
+  --teal-core: #0FB9B1;
+  --aqua-light: #4FD1C5;
+  --slate-blue: #1E3A5F;
+  --white: #FFFFFF;
+  --near-black: #0A0A0A;
+  --card-bg: #132D45;
+  --glow: rgba(15,185,177,0.25);
+}
+
+html { font-size: 16px; }
+body {
+  font-family: 'Lato', sans-serif;
+  background: var(--deep-navy);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── SPLASH ── */
+#splash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #0B1F33 0%, #102A43 40%, #1E3A5F 100%);
+}
+#splash h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, var(--teal-core), var(--aqua-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+#splash .subtitle {
+  font-weight: 300;
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 2.5rem;
+  max-width: 400px;
+  line-height: 1.6;
+}
+#splash .stats-row {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+#splash .stat-item {
+  text-align: center;
+}
+#splash .stat-num {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--teal-core);
+}
+#splash .stat-label {
+  font-weight: 300;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.btn-start {
+  background: var(--teal-core);
+  color: var(--deep-navy);
+  border: none;
+  padding: 1rem 3rem;
+  font-family: 'Lato', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.btn-start:hover {
+  background: var(--aqua-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--glow);
+}
+
+/* ── TOP BAR ── */
+#topbar {
+  display: none;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(11,31,51,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(79,209,197,0.15);
+  padding: 0.75rem 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+#topbar.visible { display: flex; }
+.progress-wrap {
+  flex: 1;
+  margin: 0 1rem;
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--teal-core), var(--aqua-light));
+  border-radius: 3px;
+  transition: width 0.4s ease;
+  width: 0%;
+}
+.level-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--teal-core);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.xp-counter {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.5);
+  white-space: nowrap;
+}
+
+/* ── LEARN PHASE ── */
+#learn-phase { display: none; padding: 1.5rem; max-width: 700px; margin: 0 auto; }
+#learn-phase.visible { display: block; }
+
+.level-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-top: 1rem;
+}
+.level-header .level-num {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--teal-core);
+  margin-bottom: 0.5rem;
+}
+.level-header h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+.level-header .level-desc {
+  font-weight: 300;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.5);
+}
+
+/* CARD */
+.card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 1.8rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(79,209,197,0.08);
+  position: relative;
+  animation: cardIn 0.35s ease;
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.card .card-tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+.card .card-tag.fact { background: rgba(15,185,177,0.15); color: var(--teal-core); }
+.card .card-tag.analogy { background: rgba(79,209,197,0.15); color: var(--aqua-light); }
+.card .card-tag.key { background: rgba(255,180,50,0.15); color: #FFB432; }
+.card .card-tag.perspective { background: rgba(147,130,255,0.15); color: #9382FF; }
+.card .card-tag.consequence { background: rgba(255,100,100,0.15); color: #FF6464; }
+
+.card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.7rem;
+  line-height: 1.35;
+}
+.card p, .card li {
+  font-weight: 300;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: rgba(255,255,255,0.8);
+}
+.card ul { list-style: none; padding: 0; }
+.card li { padding: 0.3rem 0; padding-left: 1.2rem; position: relative; }
+.card li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--teal-core);
+}
+.card .analogy-box {
+  background: rgba(15,185,177,0.06);
+  border-left: 3px solid var(--teal-core);
+  padding: 0.8rem 1rem;
+  margin-top: 1rem;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.85);
+}
+.card .analogy-box .emoji { font-size: 1.1rem; margin-right: 0.4rem; }
+
+.nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  gap: 1rem;
+}
+.btn-nav {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--white);
+  padding: 0.7rem 1.5rem;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 400;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-nav:hover { border-color: var(--teal-core); color: var(--teal-core); }
+.btn-nav.primary {
+  background: var(--teal-core);
+  border-color: var(--teal-core);
+  color: var(--deep-navy);
+  font-weight: 700;
+}
+.btn-nav.primary:hover { background: var(--aqua-light); border-color: var(--aqua-light); }
+.page-indicator {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.4);
+}
+
+/* ── QUIZ PHASE ── */
+#quiz-phase { display: none; padding: 1.5rem; max-width: 700px; margin: 0 auto; }
+#quiz-phase.visible { display: block; }
+
+.quiz-header {
+  text-align: center;
+  padding: 2rem 0 1.5rem;
+}
+.quiz-header h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+.quiz-header .quiz-sub {
+  font-weight: 300;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.9rem;
+}
+
+.quiz-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(79,209,197,0.08);
+  animation: cardIn 0.35s ease;
+}
+.quiz-card .q-num {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--teal-core);
+  margin-bottom: 0.8rem;
+}
+.quiz-card .q-text {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}
+.quiz-card .options { display: flex; flex-direction: column; gap: 0.6rem; }
+.option-btn {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--white);
+  padding: 0.9rem 1.2rem;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 400;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+  line-height: 1.4;
+}
+.option-btn:hover:not(.locked) {
+  border-color: var(--teal-core);
+  background: rgba(15,185,177,0.06);
+}
+.option-btn.correct {
+  border-color: var(--teal-core);
+  background: rgba(15,185,177,0.15);
+  color: var(--teal-core);
+}
+.option-btn.wrong {
+  border-color: #FF6464;
+  background: rgba(255,100,100,0.1);
+  color: #FF6464;
+}
+.option-btn.locked { cursor: default; opacity: 0.5; }
+.option-btn.locked.correct { opacity: 1; }
+
+.feedback-box {
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 400;
+  line-height: 1.5;
+  animation: cardIn 0.25s ease;
+}
+.feedback-box.correct-fb {
+  background: rgba(15,185,177,0.08);
+  border-left: 3px solid var(--teal-core);
+  color: rgba(255,255,255,0.85);
+}
+.feedback-box.wrong-fb {
+  background: rgba(255,100,100,0.08);
+  border-left: 3px solid #FF6464;
+  color: rgba(255,255,255,0.85);
+}
+
+/* ── RESULTS ── */
+#results-phase { display: none; padding: 2rem; max-width: 600px; margin: 0 auto; text-align: center; }
+#results-phase.visible { display: block; }
+
+.results-card {
+  background: var(--card-bg);
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  margin-top: 2rem;
+  border: 1px solid rgba(79,209,197,0.1);
+}
+.score-ring {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 1.5rem;
+  position: relative;
+}
+.score-ring svg { transform: rotate(-90deg); }
+.score-ring .score-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--teal-core);
+}
+.results-msg {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.results-sub {
+  font-weight: 300;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+.results-actions { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 500px) {
+  .card, .quiz-card { padding: 1.3rem; }
+  #splash .stats-row { gap: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <h1>Les guerres au Canada</h1>
+  <p class="subtitle">Speed run de ton unité 5. Apprends les points clés, puis prouve que tu les connais.</p>
+  <div class="stats-row">
+    <div class="stat-item"><div class="stat-num">8</div><div class="stat-label">Niveaux</div></div>
+    <div class="stat-item"><div class="stat-num">15</div><div class="stat-label">Minutes</div></div>
+    <div class="stat-item"><div class="stat-num">15</div><div class="stat-label">Questions</div></div>
+  </div>
+  <button class="btn-start" onclick="startLearn()">Commencer</button>
+</div>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <span class="level-badge" id="topLevelBadge">Niveau 1</span>
+  <div class="progress-wrap"><div class="progress-fill" id="progressFill"></div></div>
+  <span class="xp-counter" id="xpCounter">0 XP</span>
+</div>
+
+<!-- LEARN PHASE -->
+<div id="learn-phase"></div>
+
+<!-- QUIZ PHASE -->
+<div id="quiz-phase"></div>
+
+<!-- RESULTS -->
+<div id="results-phase"></div>
+
+<script>
+// ─── DATA ───
+
+const levels = [
+  {
+    num: 1,
+    title: "Les superpuissances",
+    desc: "Qui contrôlait le monde en 1700?",
+    cards: [
+      {
+        tag: "fact", tagLabel: "Fait clé",
+        title: "C'est quoi une superpuissance?",
+        body: "Un pays tellement puissant qu'il domine la scène mondiale. Pensez aux États-Unis aujourd'hui — ils ont l'influence, l'armée, et l'économie pour avoir un impact partout.",
+        analogy: "🎮 C'est comme le joueur qui a tous les power-ups dans un battle royale — les autres doivent dealer avec lui."
+      },
+      {
+        tag: "fact", tagLabel: "Fait clé",
+        title: "France 🇫🇷 vs Angleterre 🇬🇧 — les superpuissances des années 1700",
+        body: "Ces deux pays avaient des colonies partout dans le monde : en Amérique, en Inde, en Afrique, aux Caraïbes. Ils voulaient chacun plus de territoire, plus de ressources, plus de pouvoir.",
+        analogy: "⚔️ Imagine deux streamers qui essaient de dominer le même serveur — ça va inévitablement clasher."
+      }
+    ]
+  },
+  {
+    num: 2,
+    title: "La guerre de Sept Ans",
+    desc: "Un conflit mondial pour le contrôle",
+    cards: [
+      {
+        tag: "fact", tagLabel: "Fait clé",
+        title: "Pourquoi la guerre?",
+        body: "Les deux superpuissances voulaient plus de territoire. La guerre de Sept Ans a éclaté partout où ils avaient des colonies : Amérique du Nord, Europe, Inde, Caraïbes, et Afrique.",
+        analogy: "🌍 C'est littéralement une World War avant que le terme existe — des batailles sur 5 continents en même temps."
+      },
+      {
+        tag: "perspective", tagLabel: "Perspectives",
+        title: "Deux versions de l'histoire",
+        bodyHtml: `<p style="margin-bottom:0.8rem;"><strong style="color:var(--aqua-light)">🇫🇷 Côté français :</strong> En 1750, les habitants de la Nouvelle-France se considéraient comme des <em>Canadiens</em>, pas des Européens. Ils y étaient nés, c'était leur chez-eux. La France envoyait des soldats pour les protéger.</p>
+        <p><strong style="color:var(--aqua-light)">🇬🇧 Côté anglais :</strong> Les 13 colonies avaient une population plus grande et manquaient de terres. La Nouvelle-France bloquait leur accès à l'intérieur du continent et au commerce des fourrures avec les Premières Nations. Ils voulaient aussi le fleuve Saint-Laurent et les pêcheries.</p>`,
+        analogy: "🏠 Les Français disent « c'est chez nous ». Les Anglais disent « on a besoin de plus de place ». Les deux ont leur logique."
+      }
+    ]
+  },
+  {
+    num: 3,
+    title: "Québec — La forteresse",
+    desc: "La ville la plus importante de la Nouvelle-France",
+    cards: [
+      {
+        tag: "fact", tagLabel: "Fait clé",
+        title: "Québec en 1750",
+        body: "Plus de 8 000 habitants — la plus grande ville de la Nouvelle-France. C'était en fait deux villes : la haute-ville (une forteresse au sommet d'une falaise) et la basse-ville (un port au bord du fleuve avec les commerces et les travailleurs).",
+        analogy: "🏰 Pense à un château fort dans un jeu vidéo — le haut c'est la zone protégée, le bas c'est le village qu'il faut défendre."
+      },
+      {
+        tag: "key", tagLabel: "Retiens ça",
+        title: "La porte d'entrée du continent",
+        body: "Québec contrôlait l'accès au fleuve Saint-Laurent, la route principale pour entrer dans le continent. Celui qui contrôlait Québec, contrôlait le Canada.",
+        analogy: "🚪 C'est le spawn point du serveur — si tu le perds, tu perds la game."
+      }
+    ]
+  },
+  {
+    num: 4,
+    title: "L'Acadie & Le Grand Dérangement",
+    desc: "L'une des pages les plus sombres de l'histoire canadienne",
+    cards: [
+      {
+        tag: "fact", tagLabel: "Fait clé",
+        title: "Qui étaient les Acadiens?",
+        body: "Des descendants de colons français, installés près de la baie de Fundy depuis les années 1600. Ils avaient développé leur propre identité — francophones, catholiques, mariés avec des Mi'kmaq, vivant de pêche et d'agriculture. Ils n'étaient ni Français ni Anglais — ils étaient Acadiens.",
+      },
+      {
+        tag: "fact", tagLabel: "Fait clé",
+        title: "Sous contrôle britannique",
+        body: "En 1710, les Britanniques prennent l'Acadie et la renomment Nouvelle-Écosse. Mais les Acadiens sont toujours là, francophones et catholiques. Le gouverneur Charles Lawrence leur donne un ultimatum : prêtez serment de loyauté à l'Angleterre, ou perdez vos terres. Les Acadiens voulaient rester neutres — mais ce n'était plus une option.",
+      },
+      {
+        tag: "consequence", tagLabel: "Impact",
+        title: "Le Grand Dérangement (1755)",
+        body: "Lawrence décide d'expulser les Acadiens. Les soldats rassemblent les familles, les séparent, brûlent leurs maisons et détruisent leurs fermes. Les Acadiens sont embarqués sur des navires vers la Nouvelle-Angleterre, les Caraïbes, la France, ou la Louisiane. Beaucoup meurent de maladie, de famine ou de noyade pendant les voyages.",
+        analogy: "💔 Imagine qu'on te force à quitter ta maison, qu'on sépare ta famille, et qu'on brûle tout ce que tu as construit. C'est exactement ce qui s'est passé à des milliers de personnes."
+      }
+    ]
+  },
+  {
+    num: 5,
+    title: "La chute de la Nouvelle-France",
+    desc: "Louisbourg → Québec → Plaines d'Abraham",
+    cards: [
+      {
+        tag: "fact", tagLabel: "Fait clé",
+        title: "Louisbourg tombe (1758)",
+        body: "Après la déportation des Acadiens, les Britanniques avancent. Louisbourg contrôlait l'accès au Saint-Laurent. Les Britanniques mettent en place un siège — ils bloquent le port, coupent les provisions. Sans renforts, les Français perdent.",
+        analogy: "🚫 Bloque les supply lines dans n'importe quel jeu de stratégie et ton adversaire est fini."
+      },
+      {
+        tag: "key", tagLabel: "Retiens ça",
+        title: "La bataille de Québec — Wolfe vs Montcalm",
+        bodyHtml: `<p style="margin-bottom:0.8rem;"><strong style="color:var(--aqua-light)">Wolfe (🇬🇧)</strong> : 200 navires, 9 000 soldats. Il doit prendre Québec avant l'hiver sinon le Saint-Laurent gèle et il est piégé.</p>
+        <p><strong style="color:var(--aqua-light)">Montcalm (🇫🇷)</strong> : 16 000 soldats et une forteresse de pierre. Sa stratégie : attendre l'hiver. Le temps joue pour lui.</p>`,
+        analogy: "⏱️ C'est une course contre la montre pour Wolfe. Montcalm n'a qu'à survivre."
+      },
+      {
+        tag: "consequence", tagLabel: "Le moment décisif",
+        title: "Les Plaines d'Abraham (12 sept. 1759)",
+        body: "Wolfe trouve un point faible. Le 12 septembre, ses soldats grimpent un sentier escarpé pendant la nuit. Au matin, les Français voient les Britanniques sur les plaines. Montcalm envoie 6 000 soldats. En seulement 15 minutes : plus de 1 300 morts. Les Britanniques gagnent, mais Wolfe ET Montcalm meurent tous les deux. C'est la bataille la plus sanglante en sol canadien.",
+        analogy: "⚡ 15 minutes. C'est le temps d'un épisode de série. Et ça a changé le destin du Canada."
+      }
+    ]
+  },
+  {
+    num: 6,
+    title: "Les Premières Nations & Pontiac",
+    desc: "Les alliés oubliés et leur résistance",
+    cards: [
+      {
+        tag: "fact", tagLabel: "Fait clé",
+        title: "Pendant la guerre",
+        body: "La plupart des Premières Nations se sont battues pour les Français, grâce aux alliances formées par le commerce des fourrures. Mais quand le traité de paix a été signé entre la France et l'Angleterre, les Premières Nations n'ont été ni considérées ni invitées aux discussions.",
+        analogy: "🤝 Tu aides ton coéquipier à gagner le tournoi, et quand il reçoit le trophée, il ne te mentionne même pas."
+      },
+      {
+        tag: "key", tagLabel: "Retiens ça",
+        title: "La guerre de Pontiac (1763)",
+        body: "Pontiac, chef des Odawas, est furieux. Il convainc plusieurs Premières Nations de se battre ensemble pour chasser les Britanniques de la vallée de la rivière Ohio. Ils gagnent plusieurs batailles à Détroit et autour du lac Érié. Mais l'aide française qu'il attendait n'arrive jamais, et quand les Britanniques reçoivent des renforts, les Premières Nations sont vaincues.",
+      }
+    ]
+  },
+  {
+    num: 7,
+    title: "Après la guerre — Que faire?",
+    desc: "Le traité de Paris et les trois options",
+    cards: [
+      {
+        tag: "fact", tagLabel: "Fait clé",
+        title: "Le traité de Paris (1763)",
+        body: "Les guerres en Amérique du Nord se terminent en 1760, mais les guerres entre France et Angleterre continuent jusqu'en 1763. Le traité de Paris donne presque toute l'Amérique du Nord aux Britanniques. La France garde seulement Saint-Pierre et Miquelon.",
+      },
+      {
+        tag: "perspective", tagLabel: "Le grand dilemme",
+        title: "Les trois options britanniques",
+        bodyHtml: `<ul>
+          <li><strong style="color:#FF6464">L'éviction</strong> — Enlever tout le monde sauf les Anglais (comme avec les Acadiens)</li>
+          <li><strong style="color:#FFB432">L'assimilation</strong> — Tout le monde reste, mais doit adopter la culture et religion britanniques</li>
+          <li><strong style="color:var(--teal-core)">L'accommodement</strong> — Tout le monde peut rester avec ses propres cultures, religions, et langues</li>
+        </ul>`,
+        analogy: "🎮 Quand tu conquiers un territoire dans un jeu de stratégie, tu dois décider : tu détruis, tu convertis, ou tu intègres?"
+      }
+    ]
+  },
+  {
+    num: 8,
+    title: "La naissance du bilinguisme",
+    desc: "De la Proclamation royale à l'Acte de Québec",
+    cards: [
+      {
+        tag: "fact", tagLabel: "Fait clé",
+        title: "La Proclamation royale de 1763",
+        body: "Le roi George III choisit l'assimilation — les lois et institutions britanniques sont imposées au Québec. MAIS la guerre de Pontiac a montré aux Britanniques qu'ils doivent écouter les Premières Nations. La Proclamation réserve un territoire aux Premières Nations, interdit aux Européens de s'y installer. Ce territoire reste quand même petit.",
+      },
+      {
+        tag: "key", tagLabel: "Point d'examen",
+        title: "L'Acte de Québec (1774) — Le début du bilinguisme",
+        body: "L'assimilation ne fonctionne pas. L'identité canadienne-française est trop forte. Les Britanniques réalisent qu'ils ne peuvent pas forcer 70 000 personnes à changer de langue et de culture. Alors ils adoptent l'Acte de Québec : les Canadiens conservent le droit à leur langue et à leurs traditions. C'est la base du bilinguisme au Canada.",
+        analogy: "🇨🇦 C'est pour ça que le Canada est bilingue aujourd'hui. L'identité française était trop forte pour être effacée."
+      },
+      {
+        tag: "consequence", tagLabel: "À noter",
+        title: "Pas tout le monde est inclus",
+        body: "L'Acte de Québec reconnaît les droits des Canadiens français et anglais, mais les Premières Nations ne reçoivent PAS les mêmes droits ni le même pouvoir. Un thème qui continue dans l'histoire canadienne.",
+      }
+    ]
+  }
+];
+
+const quizQuestions = [
+  {
+    q: "Qu'est-ce qu'une superpuissance?",
+    opts: ["Un pays avec beaucoup de population", "Un pays qui domine la scène mondiale", "Un pays qui a le plus grand territoire", "Un pays qui a la meilleure armée"],
+    correct: 1,
+    explain: "Une superpuissance a l'influence, l'armée ET l'économie pour dominer mondialement — pas juste un de ces facteurs."
+  },
+  {
+    q: "Quelles étaient les superpuissances des années 1700?",
+    opts: ["L'Espagne et le Portugal", "La France et l'Angleterre", "Les États-Unis et la Russie", "La France et l'Allemagne"],
+    correct: 1,
+    explain: "La France et l'Angleterre avaient des colonies partout dans le monde et se battaient pour la domination."
+  },
+  {
+    q: "Pourquoi les Anglais voulaient-ils les terres de la Nouvelle-France?",
+    opts: ["Pour l'or et les diamants", "Pour les terres, le commerce des fourrures, et le Saint-Laurent", "Pour construire des usines", "Pour s'allier avec les Français"],
+    correct: 1,
+    explain: "Les 13 colonies manquaient de terres, et la Nouvelle-France bloquait l'accès au commerce des fourrures et au fleuve Saint-Laurent."
+  },
+  {
+    q: "Pourquoi la ville de Québec était-elle stratégiquement importante?",
+    opts: ["Elle avait les meilleures terres agricoles", "Elle contrôlait l'accès au fleuve Saint-Laurent", "Elle était la plus proche de l'Europe", "Elle avait la plus grande armée"],
+    correct: 1,
+    explain: "Québec contrôlait la porte d'entrée du continent via le Saint-Laurent."
+  },
+  {
+    q: "Qui étaient les Acadiens?",
+    opts: ["Des soldats anglais installés en Acadie", "Des colons espagnols", "Des descendants de colons français avec une identité distincte", "Des commerçants hollandais"],
+    correct: 2,
+    explain: "Les Acadiens étaient des descendants de colons français, installés depuis les 1600s, avec leur propre culture unique mêlée aux Mi'kmaq."
+  },
+  {
+    q: "Qu'est-ce que Charles Lawrence a exigé des Acadiens?",
+    opts: ["De payer plus de taxes", "De prêter serment de loyauté à l'Angleterre", "De quitter l'Amérique du Nord", "De se convertir au protestantisme"],
+    correct: 1,
+    explain: "Lawrence a donné un ultimatum : prêter serment ou perdre leurs terres. Les Acadiens voulaient rester neutres."
+  },
+  {
+    q: "Qu'est-ce que le Grand Dérangement?",
+    opts: ["Une grande fête acadienne", "L'expulsion forcée des Acadiens de la Nouvelle-Écosse", "Une bataille entre la France et l'Angleterre", "Un traité de paix"],
+    correct: 1,
+    explain: "Les soldats ont séparé des familles, brûlé des maisons, et déporté les Acadiens par navire. Beaucoup sont morts pendant les voyages."
+  },
+  {
+    q: "Comment les Britanniques ont-ils vaincu Louisbourg?",
+    opts: ["Avec une attaque surprise la nuit", "En mettant en place un siège qui a coupé les provisions", "En négociant avec les Français", "En achetant la forteresse"],
+    correct: 1,
+    explain: "Ils ont bloqué le port, empêchant les renforts et les provisions d'arriver. Sans ressources, les Français ont perdu."
+  },
+  {
+    q: "Quelle était la stratégie de Montcalm pour défendre Québec?",
+    opts: ["Attaquer les Britanniques directement", "Attendre l'hiver pour que le Saint-Laurent gèle", "Demander l'aide des Espagnols", "Abandonner la forteresse"],
+    correct: 1,
+    explain: "Si Montcalm tenait jusqu'à l'hiver, le fleuve gèlerait et les navires de Wolfe seraient piégés."
+  },
+  {
+    q: "Combien de temps a duré la bataille des Plaines d'Abraham?",
+    opts: ["3 jours", "Environ 15 minutes", "2 heures", "1 semaine"],
+    correct: 1,
+    explain: "Seulement 15 minutes — mais avec plus de 1 300 morts. Wolfe et Montcalm sont tous les deux morts."
+  },
+  {
+    q: "Pourquoi la plupart des Premières Nations se sont-elles battues pour les Français?",
+    opts: ["Les Français payaient mieux", "Grâce aux alliances du commerce des fourrures", "Les Français leur promettaient des terres", "Les Anglais leur avaient déclaré la guerre"],
+    correct: 1,
+    explain: "Le commerce des fourrures avait créé des alliances solides entre les Français et les Premières Nations."
+  },
+  {
+    q: "Qui était Pontiac et pourquoi s'est-il battu?",
+    opts: ["Un général français qui défendait Québec", "Le chef des Odawas qui voulait chasser les Anglais", "Un gouverneur britannique de l'Ohio", "Un marchand de fourrures"],
+    correct: 1,
+    explain: "Pontiac a convaincu plusieurs Premières Nations de combattre ensemble pour chasser les Britanniques de la vallée de l'Ohio."
+  },
+  {
+    q: "Qu'est-ce que le traité de Paris de 1763 a donné aux Britanniques?",
+    opts: ["Seulement le Québec", "Presque toute l'Amérique du Nord", "Les Caraïbes seulement", "Rien — c'était un match nul"],
+    correct: 1,
+    explain: "La France a perdu presque tout son territoire en Amérique du Nord, sauf Saint-Pierre et Miquelon."
+  },
+  {
+    q: "Quelle est la différence entre assimilation et accommodement?",
+    opts: ["L'assimilation = tout le monde part; l'accommodement = on reste", "L'assimilation = adopter la culture britannique; l'accommodement = garder sa propre culture", "Aucune différence", "L'assimilation = garder ses droits; l'accommodement = les perdre"],
+    correct: 1,
+    explain: "L'assimilation force tout le monde à suivre une seule culture. L'accommodement permet la coexistence de plusieurs cultures."
+  },
+  {
+    q: "Pourquoi l'Acte de Québec de 1774 est-il important?",
+    opts: ["Il a expulsé les Français du Québec", "Il a reconnu le droit des Canadiens à leur langue et leurs traditions", "Il a donné des terres aux Premières Nations", "Il a déclaré l'indépendance du Québec"],
+    correct: 1,
+    explain: "L'assimilation ne fonctionnait pas. L'identité canadienne-française était trop forte. C'est la base du bilinguisme canadien."
+  }
+];
+
+// ─── STATE ───
+let xp = 0;
+let currentLevel = 0;
+let currentCard = 0;
+let totalCards = levels.reduce((s,l) => s + l.cards.length, 0);
+let cardsViewed = 0;
+let quizIdx = 0;
+let score = 0;
+let quizAnswered = false;
+
+// ─── HELPERS ───
+function $(id) { return document.getElementById(id); }
+function updateProgress() {
+  const pct = ((cardsViewed) / totalCards) * 100;
+  $('progressFill').style.width = Math.min(pct, 100) + '%';
+  $('topLevelBadge').textContent = 'Niveau ' + (currentLevel + 1);
+  $('xpCounter').textContent = xp + ' XP';
+}
+
+// ─── SPLASH → LEARN ───
+function startLearn() {
+  $('splash').style.display = 'none';
+  $('topbar').classList.add('visible');
+  $('learn-phase').classList.add('visible');
+  renderLevel();
+}
+
+// ─── RENDER LEVEL ───
+function renderLevel() {
+  const level = levels[currentLevel];
+  const card = level.cards[currentCard];
+  const isFirst = currentLevel === 0 && currentCard === 0;
+  const isLast = currentLevel === levels.length - 1 && currentCard === level.cards.length - 1;
+
+  let html = '';
+  // level header (only on first card of level)
+  if (currentCard === 0) {
+    html += `<div class="level-header">
+      <div class="level-num">Niveau ${level.num} / ${levels.length}</div>
+      <h2>${level.title}</h2>
+      <p class="level-desc">${level.desc}</p>
+    </div>`;
+  }
+
+  // card
+  html += `<div class="card">
+    <span class="card-tag ${card.tag}">${card.tagLabel}</span>
+    <h3>${card.title}</h3>
+    ${card.bodyHtml ? card.bodyHtml : `<p>${card.body}</p>`}
+    ${card.analogy ? `<div class="analogy-box"><span class="emoji">${card.analogy.slice(0,2)}</span>${card.analogy.slice(2)}</div>` : ''}
+  </div>`;
+
+  // nav
+  const totalCardGlobal = levels.slice(0, currentLevel).reduce((s,l)=>s+l.cards.length,0) + currentCard + 1;
+  html += `<div class="nav-row">
+    <button class="btn-nav" onclick="prevCard()" ${isFirst ? 'style="visibility:hidden"' : ''}>← Retour</button>
+    <span class="page-indicator">${totalCardGlobal} / ${totalCards}</span>
+    <button class="btn-nav primary" onclick="nextCard()">${isLast ? 'Passer au quiz →' : 'Suivant →'}</button>
+  </div>`;
+
+  $('learn-phase').innerHTML = html;
+  updateProgress();
+}
+
+function nextCard() {
+  cardsViewed++;
+  xp += 10;
+  const level = levels[currentLevel];
+  if (currentCard < level.cards.length - 1) {
+    currentCard++;
+    renderLevel();
+  } else if (currentLevel < levels.length - 1) {
+    currentLevel++;
+    currentCard = 0;
+    renderLevel();
+  } else {
+    // move to quiz
+    $('learn-phase').classList.remove('visible');
+    $('learn-phase').style.display = 'none';
+    startQuiz();
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function prevCard() {
+  if (currentCard > 0) {
+    currentCard--;
+    renderLevel();
+  } else if (currentLevel > 0) {
+    currentLevel--;
+    currentCard = levels[currentLevel].cards.length - 1;
+    renderLevel();
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── QUIZ ───
+function startQuiz() {
+  $('quiz-phase').classList.add('visible');
+  $('topLevelBadge').textContent = 'Quiz';
+  $('progressFill').style.width = '100%';
+  renderQuiz();
+}
+
+function renderQuiz() {
+  const q = quizQuestions[quizIdx];
+  let html = '';
+  if (quizIdx === 0) {
+    html += `<div class="quiz-header">
+      <h2>Défi — Prouve que tu sais</h2>
+      <p class="quiz-sub">15 questions. Chaque bonne réponse = 20 XP.</p>
+    </div>`;
+  }
+  html += `<div class="quiz-card" id="qCard">
+    <div class="q-num">Question ${quizIdx + 1} / ${quizQuestions.length}</div>
+    <div class="q-text">${q.q}</div>
+    <div class="options" id="qOpts">
+      ${q.opts.map((o, i) => `<button class="option-btn" onclick="answer(${i})">${o}</button>`).join('')}
+    </div>
+    <div id="qFeedback"></div>
+  </div>`;
+  html += `<div class="nav-row">
+    <span></span>
+    <span class="page-indicator">${quizIdx + 1} / ${quizQuestions.length}</span>
+    <button class="btn-nav primary" id="quizNext" onclick="nextQuiz()" style="visibility:hidden">Suivant →</button>
+  </div>`;
+  $('quiz-phase').innerHTML = html;
+}
+
+function answer(idx) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const q = quizQuestions[quizIdx];
+  const btns = document.querySelectorAll('#qOpts .option-btn');
+  btns.forEach((b, i) => {
+    b.classList.add('locked');
+    if (i === q.correct) b.classList.add('correct');
+    if (i === idx && idx !== q.correct) b.classList.add('wrong');
+  });
+  const isCorrect = idx === q.correct;
+  if (isCorrect) { score++; xp += 20; }
+  $('xpCounter').textContent = xp + ' XP';
+  $('qFeedback').innerHTML = `<div class="feedback-box ${isCorrect ? 'correct-fb' : 'wrong-fb'}">
+    ${isCorrect ? '✓ Correct!' : '✗ Pas tout à fait.'} ${q.explain}
+  </div>`;
+  document.getElementById('quizNext').style.visibility = 'visible';
+}
+
+function nextQuiz() {
+  quizAnswered = false;
+  quizIdx++;
+  if (quizIdx < quizQuestions.length) {
+    renderQuiz();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    showResults();
+  }
+}
+
+// ─── RESULTS ───
+function showResults() {
+  $('quiz-phase').classList.remove('visible');
+  $('quiz-phase').style.display = 'none';
+  $('topbar').classList.remove('visible');
+  $('results-phase').classList.add('visible');
+
+  const pct = Math.round((score / quizQuestions.length) * 100);
+  const circumference = 2 * Math.PI * 58;
+  const offset = circumference - (pct / 100) * circumference;
+
+  let msg, sub;
+  if (pct >= 90) { msg = "🔥 Maîtrise totale"; sub = "Tu vas détruire ce test."; }
+  else if (pct >= 70) { msg = "💪 Solide"; sub = "Tu connais bien la matière. Revois les erreurs et tu es prêt."; }
+  else if (pct >= 50) { msg = "📖 Presque là"; sub = "Relis les niveaux où tu as eu des erreurs, puis refais le quiz."; }
+  else { msg = "🔄 On recommence"; sub = "Pas de stress — refais le speed run et le quiz. Tu vas t'améliorer vite."; }
+
+  $('results-phase').innerHTML = `
+    <div class="results-card">
+      <div class="score-ring">
+        <svg width="140" height="140" viewBox="0 0 140 140">
+          <circle cx="70" cy="70" r="58" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8"/>
+          <circle cx="70" cy="70" r="58" fill="none" stroke="var(--teal-core)" stroke-width="8"
+            stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" stroke-linecap="round"
+            style="transition: stroke-dashoffset 1s ease"/>
+        </svg>
+        <div class="score-text">${pct}%</div>
+      </div>
+      <div class="results-msg">${msg}</div>
+      <p class="results-sub">${score} / ${quizQuestions.length} correct · ${xp} XP total<br>${sub}</p>
+      <div class="results-actions">
+        <button class="btn-nav" onclick="location.reload()">Recommencer</button>
+        <button class="btn-nav primary" onclick="reviewMistakes()">Revoir les erreurs</button>
+      </div>
+    </div>`;
+}
+
+function reviewMistakes() {
+  // Simple — just restart from learn
+  xp = 0; cardsViewed = 0; currentLevel = 0; currentCard = 0; score = 0; quizIdx = 0;
+  $('results-phase').classList.remove('visible');
+  $('results-phase').style.display = 'none';
+  $('topbar').classList.add('visible');
+  $('learn-phase').style.display = '';
+  $('learn-phase').classList.add('visible');
+  renderLevel();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
