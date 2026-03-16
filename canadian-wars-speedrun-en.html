@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canadian Wars — Speed Run (English)</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --deep-navy: #0B1F33;
+  --midnight-blue: #102A43;
+  --teal-core: #0FB9B1;
+  --aqua-light: #4FD1C5;
+  --slate-blue: #1E3A5F;
+  --white: #FFFFFF;
+  --card-bg: #132D45;
+  --glow: rgba(15,185,177,0.25);
+}
+
+html { font-size: 16px; }
+body {
+  font-family: 'Lato', sans-serif;
+  background: var(--deep-navy);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── STICK FIGURES ── */
+.stickman {
+  display: inline-block;
+  position: relative;
+}
+.stickman svg {
+  width: 60px;
+  height: 80px;
+}
+.stickman svg .body { stroke: var(--aqua-light); stroke-width: 2.5; fill: none; stroke-linecap: round; }
+.stickman svg .head { fill: var(--aqua-light); }
+.stickman svg .sword { stroke: #FFB432; stroke-width: 2; fill: none; stroke-linecap: round; }
+.stickman svg .flag-pole { stroke: var(--white); stroke-width: 1.5; fill: none; }
+.stickman svg .flag-fr { fill: #5B8DEF; }
+.stickman svg .flag-gb { fill: #FF6464; }
+.stickman svg .hat { fill: var(--teal-core); }
+
+/* stick fight animation */
+@keyframes swordSwing {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-35deg); }
+  50% { transform: rotate(15deg); }
+  75% { transform: rotate(-20deg); }
+}
+@keyframes bobble {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes runCycle {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(8px); }
+  100% { transform: translateX(0); }
+}
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-15deg); }
+  75% { transform: rotate(15deg); }
+}
+@keyframes floatUp {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-8px) rotate(-3deg); }
+  66% { transform: translateY(-4px) rotate(3deg); }
+}
+@keyframes deadFlop {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(90deg); }
+}
+@keyframes shipRock {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+@keyframes cannonFire {
+  0%, 90%, 100% { transform: translateX(0); }
+  95% { transform: translateX(-4px); }
+}
+@keyframes explosion {
+  0% { transform: scale(0); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+.scene-battle {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0;
+  padding: 1rem 0;
+  min-height: 100px;
+}
+.scene-battle .fighter-left {
+  animation: runCycle 0.6s ease infinite;
+}
+.scene-battle .fighter-right {
+  animation: runCycle 0.6s ease infinite reverse;
+}
+.scene-battle .sword-arm {
+  transform-origin: 50% 0%;
+  animation: swordSwing 0.8s ease infinite;
+}
+.scene-battle .sword-arm-r {
+  transform-origin: 50% 0%;
+  animation: swordSwing 0.8s ease infinite 0.4s;
+}
+
+.scene-ship {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+.scene-ship svg {
+  animation: shipRock 2s ease infinite;
+}
+
+.scene-deport {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 1rem 0;
+}
+.scene-deport .sad-stick {
+  animation: bobble 1.5s ease infinite;
+}
+.scene-deport .sad-stick:nth-child(2) { animation-delay: 0.3s; }
+.scene-deport .sad-stick:nth-child(3) { animation-delay: 0.6s; }
+
+.scene-climb {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+.scene-climb .climber {
+  animation: floatUp 2s ease infinite;
+}
+
+.scene-peace {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 1rem 0;
+}
+.scene-peace .waver {
+  animation: wave 1.5s ease infinite;
+}
+
+.scene-pontiac {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+.scene-pontiac .angry-chief {
+  animation: bobble 0.5s ease infinite;
+}
+
+/* splash stick fight */
+.splash-scene {
+  position: relative;
+  width: 280px;
+  height: 110px;
+  margin: 0 auto 1.5rem;
+}
+.splash-scene .fr-fighter {
+  position: absolute;
+  left: 40px;
+  bottom: 0;
+  animation: runCycle 0.6s ease infinite;
+}
+.splash-scene .gb-fighter {
+  position: absolute;
+  right: 40px;
+  bottom: 0;
+  animation: runCycle 0.6s ease infinite reverse;
+}
+.splash-scene .vs-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #FFB432;
+  text-shadow: 0 0 20px rgba(255,180,50,0.4);
+  animation: bobble 1s ease infinite;
+}
+
+/* ── SPLASH ── */
+#splash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #0B1F33 0%, #102A43 40%, #1E3A5F 100%);
+}
+#splash h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, var(--teal-core), var(--aqua-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+#splash .subtitle {
+  font-weight: 300;
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 1.5rem;
+  max-width: 440px;
+  line-height: 1.6;
+}
+#splash .stats-row {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+#splash .stat-item { text-align: center; }
+#splash .stat-num {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--teal-core);
+}
+#splash .stat-label {
+  font-weight: 300;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.btn-start {
+  background: var(--teal-core);
+  color: var(--deep-navy);
+  border: none;
+  padding: 1rem 3rem;
+  font-family: 'Lato', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.btn-start:hover {
+  background: var(--aqua-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--glow);
+}
+
+/* ── TOP BAR ── */
+#topbar {
+  display: none;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(11,31,51,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(79,209,197,0.15);
+  padding: 0.75rem 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+#topbar.visible { display: flex; }
+.progress-wrap {
+  flex: 1;
+  margin: 0 1rem;
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--teal-core), var(--aqua-light));
+  border-radius: 3px;
+  transition: width 0.4s ease;
+  width: 0%;
+}
+.level-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--teal-core);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.xp-counter {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.5);
+  white-space: nowrap;
+}
+
+/* ── LEARN PHASE ── */
+#learn-phase { display: none; padding: 1.5rem; max-width: 700px; margin: 0 auto; }
+#learn-phase.visible { display: block; }
+
+.level-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-top: 1rem;
+}
+.level-header .level-num {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--teal-core);
+  margin-bottom: 0.5rem;
+}
+.level-header h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+.level-header .level-desc {
+  font-weight: 300;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.5);
+}
+
+/* CARD */
+.card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 1.8rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(79,209,197,0.08);
+  position: relative;
+  animation: cardIn 0.35s ease;
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.card .card-tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+.card .card-tag.fact { background: rgba(15,185,177,0.15); color: var(--teal-core); }
+.card .card-tag.analogy { background: rgba(79,209,197,0.15); color: var(--aqua-light); }
+.card .card-tag.key { background: rgba(255,180,50,0.15); color: #FFB432; }
+.card .card-tag.perspective { background: rgba(147,130,255,0.15); color: #9382FF; }
+.card .card-tag.consequence { background: rgba(255,100,100,0.15); color: #FF6464; }
+
+.card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.7rem;
+  line-height: 1.35;
+}
+.card p, .card li {
+  font-weight: 300;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: rgba(255,255,255,0.8);
+}
+.card ul { list-style: none; padding: 0; }
+.card li { padding: 0.3rem 0; padding-left: 1.2rem; position: relative; }
+.card li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--teal-core);
+}
+.card .analogy-box {
+  background: rgba(15,185,177,0.06);
+  border-left: 3px solid var(--teal-core);
+  padding: 0.8rem 1rem;
+  margin-top: 1rem;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.85);
+}
+.card .analogy-box .emoji { font-size: 1.1rem; margin-right: 0.4rem; }
+
+.nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  gap: 1rem;
+}
+.btn-nav {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--white);
+  padding: 0.7rem 1.5rem;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 400;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-nav:hover { border-color: var(--teal-core); color: var(--teal-core); }
+.btn-nav.primary {
+  background: var(--teal-core);
+  border-color: var(--teal-core);
+  color: var(--deep-navy);
+  font-weight: 700;
+}
+.btn-nav.primary:hover { background: var(--aqua-light); border-color: var(--aqua-light); }
+.page-indicator {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.4);
+}
+
+/* ── QUIZ PHASE ── */
+#quiz-phase { display: none; padding: 1.5rem; max-width: 700px; margin: 0 auto; }
+#quiz-phase.visible { display: block; }
+
+.quiz-header { text-align: center; padding: 2rem 0 1.5rem; }
+.quiz-header h2 { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.3rem; }
+.quiz-header .quiz-sub { font-weight: 300; color: rgba(255,255,255,0.5); font-size: 0.9rem; }
+
+.quiz-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(79,209,197,0.08);
+  animation: cardIn 0.35s ease;
+}
+.quiz-card .q-num {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--teal-core);
+  margin-bottom: 0.8rem;
+}
+.quiz-card .q-text {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}
+.quiz-card .options { display: flex; flex-direction: column; gap: 0.6rem; }
+.option-btn {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--white);
+  padding: 0.9rem 1.2rem;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 400;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+  line-height: 1.4;
+}
+.option-btn:hover:not(.locked) {
+  border-color: var(--teal-core);
+  background: rgba(15,185,177,0.06);
+}
+.option-btn.correct {
+  border-color: var(--teal-core);
+  background: rgba(15,185,177,0.15);
+  color: var(--teal-core);
+}
+.option-btn.wrong {
+  border-color: #FF6464;
+  background: rgba(255,100,100,0.1);
+  color: #FF6464;
+}
+.option-btn.locked { cursor: default; opacity: 0.5; }
+.option-btn.locked.correct { opacity: 1; }
+
+.feedback-box {
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 400;
+  line-height: 1.5;
+  animation: cardIn 0.25s ease;
+}
+.feedback-box.correct-fb {
+  background: rgba(15,185,177,0.08);
+  border-left: 3px solid var(--teal-core);
+  color: rgba(255,255,255,0.85);
+}
+.feedback-box.wrong-fb {
+  background: rgba(255,100,100,0.08);
+  border-left: 3px solid #FF6464;
+  color: rgba(255,255,255,0.85);
+}
+
+/* ── RESULTS ── */
+#results-phase { display: none; padding: 2rem; max-width: 600px; margin: 0 auto; text-align: center; }
+#results-phase.visible { display: block; }
+
+.results-card {
+  background: var(--card-bg);
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  margin-top: 2rem;
+  border: 1px solid rgba(79,209,197,0.1);
+}
+.score-ring {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 1.5rem;
+  position: relative;
+}
+.score-ring svg { transform: rotate(-90deg); }
+.score-ring .score-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--teal-core);
+}
+.results-msg {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.results-sub {
+  font-weight: 300;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+.results-actions { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; }
+
+/* fun confetti for results */
+@keyframes confettiFall {
+  0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+.confetti {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  top: -10px;
+  z-index: 200;
+  pointer-events: none;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 500px) {
+  .card, .quiz-card { padding: 1.3rem; }
+  #splash .stats-row { gap: 1rem; }
+  .splash-scene { width: 220px; }
+  .splash-scene .fr-fighter { left: 10px; }
+  .splash-scene .gb-fighter { right: 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <h1>Wars in Canada</h1>
+  <p class="subtitle">Speed run your Unit 5. Learn the key points, then prove you actually know them. No cap.</p>
+
+  <!-- Stick figure battle scene -->
+  <div class="splash-scene">
+    <!-- French fighter -->
+    <div class="fr-fighter">
+      <svg width="60" height="100" viewBox="0 0 60 100">
+        <circle cx="30" cy="12" r="8" class="head" fill="#5B8DEF"/>
+        <!-- beret -->
+        <ellipse cx="30" cy="6" rx="10" ry="3" fill="#5B8DEF"/>
+        <line x1="30" y1="20" x2="30" y2="55" class="body" stroke="#5B8DEF"/>
+        <!-- legs -->
+        <line x1="30" y1="55" x2="18" y2="80" class="body" stroke="#5B8DEF"/>
+        <line x1="30" y1="55" x2="42" y2="80" class="body" stroke="#5B8DEF"/>
+        <!-- back arm -->
+        <line x1="30" y1="30" x2="15" y2="45" class="body" stroke="#5B8DEF"/>
+        <!-- sword arm -->
+        <g class="sword-arm" style="transform-origin: 30px 30px;">
+          <line x1="30" y1="30" x2="50" y2="20" class="body" stroke="#5B8DEF"/>
+          <line x1="50" y1="20" x2="58" y2="8" stroke="#FFB432" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+        <!-- flag on back -->
+        <line x1="22" y1="25" x2="22" y2="5" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+        <rect x="8" y="5" width="14" height="8" rx="1" fill="#5B8DEF" opacity="0.6"/>
+      </svg>
+    </div>
+    <div class="vs-text">VS</div>
+    <!-- British fighter -->
+    <div class="gb-fighter">
+      <svg width="60" height="100" viewBox="0 0 60 100">
+        <circle cx="30" cy="12" r="8" class="head" fill="#FF6464"/>
+        <!-- top hat -->
+        <rect x="22" y="0" width="16" height="8" rx="2" fill="#FF6464"/>
+        <rect x="18" y="7" width="24" height="3" rx="1" fill="#FF6464"/>
+        <line x1="30" y1="20" x2="30" y2="55" class="body" stroke="#FF6464"/>
+        <line x1="30" y1="55" x2="18" y2="80" class="body" stroke="#FF6464"/>
+        <line x1="30" y1="55" x2="42" y2="80" class="body" stroke="#FF6464"/>
+        <line x1="30" y1="30" x2="45" y2="45" class="body" stroke="#FF6464"/>
+        <g class="sword-arm-r" style="transform-origin: 30px 30px;">
+          <line x1="30" y1="30" x2="10" y2="20" class="body" stroke="#FF6464"/>
+          <line x1="10" y1="20" x2="2" y2="8" stroke="#FFB432" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+        <line x1="38" y1="25" x2="38" y2="5" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+        <rect x="38" y="5" width="14" height="8" rx="1" fill="#FF6464" opacity="0.6"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-item"><div class="stat-num">8</div><div class="stat-label">Levels</div></div>
+    <div class="stat-item"><div class="stat-num">15</div><div class="stat-label">Minutes</div></div>
+    <div class="stat-item"><div class="stat-num">15</div><div class="stat-label">Questions</div></div>
+  </div>
+  <button class="btn-start" onclick="startLearn()">Let's Go</button>
+</div>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <span class="level-badge" id="topLevelBadge">Level 1</span>
+  <div class="progress-wrap"><div class="progress-fill" id="progressFill"></div></div>
+  <span class="xp-counter" id="xpCounter">0 XP</span>
+</div>
+
+<!-- LEARN PHASE -->
+<div id="learn-phase"></div>
+
+<!-- QUIZ PHASE -->
+<div id="quiz-phase"></div>
+
+<!-- RESULTS -->
+<div id="results-phase"></div>
+
+<script>
+// ─── SVG SCENE GENERATORS ───
+
+function svgStickman(color, accessories = '') {
+  return `<svg width="50" height="75" viewBox="0 0 50 75">
+    <circle cx="25" cy="10" r="7" fill="${color}"/>
+    ${accessories}
+    <line x1="25" y1="17" x2="25" y2="45" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="25" y1="45" x2="14" y2="68" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="25" y1="45" x2="36" y2="68" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="25" y1="25" x2="10" y2="38" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="25" y1="25" x2="40" y2="38" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>`;
+}
+
+function sceneBattle() {
+  return `<div class="scene-battle">
+    <div class="fighter-left">
+      <svg width="70" height="90" viewBox="0 0 70 90">
+        <circle cx="25" cy="12" r="8" fill="#5B8DEF"/>
+        <ellipse cx="25" cy="6" rx="10" ry="3" fill="#5B8DEF"/>
+        <line x1="25" y1="20" x2="25" y2="50" stroke="#5B8DEF" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="25" y1="50" x2="14" y2="78" stroke="#5B8DEF" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="25" y1="50" x2="36" y2="78" stroke="#5B8DEF" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="25" y1="30" x2="10" y2="42" stroke="#5B8DEF" stroke-width="2.5" stroke-linecap="round"/>
+        <g class="sword-arm" style="transform-origin:25px 30px">
+          <line x1="25" y1="30" x2="48" y2="18" stroke="#5B8DEF" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="48" y1="18" x2="65" y2="6" stroke="#FFB432" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+        <text x="18" y="88" font-size="8" fill="rgba(255,255,255,0.4)" font-family="Lato">FR</text>
+      </svg>
+    </div>
+    <svg width="30" height="90" viewBox="0 0 30 90">
+      <text x="2" y="55" font-size="18" fill="#FFB432" font-weight="700" font-family="Lato">⚔️</text>
+    </svg>
+    <div class="fighter-right">
+      <svg width="70" height="90" viewBox="0 0 70 90">
+        <circle cx="45" cy="12" r="8" fill="#FF6464"/>
+        <rect x="37" y="0" width="16" height="7" rx="2" fill="#FF6464"/>
+        <rect x="33" y="6" width="24" height="3" rx="1" fill="#FF6464"/>
+        <line x1="45" y1="20" x2="45" y2="50" stroke="#FF6464" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="45" y1="50" x2="34" y2="78" stroke="#FF6464" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="45" y1="50" x2="56" y2="78" stroke="#FF6464" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="45" y1="30" x2="60" y2="42" stroke="#FF6464" stroke-width="2.5" stroke-linecap="round"/>
+        <g class="sword-arm-r" style="transform-origin:45px 30px">
+          <line x1="45" y1="30" x2="22" y2="18" stroke="#FF6464" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="22" y1="18" x2="5" y2="6" stroke="#FFB432" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+        <text x="38" y="88" font-size="8" fill="rgba(255,255,255,0.4)" font-family="Lato">GB</text>
+      </svg>
+    </div>
+  </div>`;
+}
+
+function sceneShip() {
+  return `<div class="scene-ship">
+    <svg width="180" height="80" viewBox="0 0 180 80">
+      <g style="animation: shipRock 2s ease infinite; transform-origin: 90px 60px;">
+        <!-- hull -->
+        <path d="M30,50 Q40,70 90,70 Q140,70 150,50 Z" fill="#1E3A5F" stroke="var(--aqua-light)" stroke-width="1.5"/>
+        <!-- mast -->
+        <line x1="90" y1="50" x2="90" y2="10" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+        <!-- sail -->
+        <path d="M92,12 Q110,30 92,48" fill="rgba(79,209,197,0.15)" stroke="var(--aqua-light)" stroke-width="1"/>
+        <!-- flag -->
+        <rect x="85" y="8" width="12" height="6" rx="1" fill="#FF6464" opacity="0.7"/>
+        <!-- sad stick people on ship -->
+        <circle cx="60" cy="42" r="4" fill="rgba(255,255,255,0.4)"/>
+        <line x1="60" y1="46" x2="60" y2="56" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+        <circle cx="75" cy="44" r="4" fill="rgba(255,255,255,0.4)"/>
+        <line x1="75" y1="48" x2="75" y2="58" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+        <circle cx="105" cy="42" r="4" fill="rgba(255,255,255,0.4)"/>
+        <line x1="105" y1="46" x2="105" y2="56" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+        <!-- waves -->
+        <path d="M10,68 Q30,62 50,68 Q70,74 90,68 Q110,62 130,68 Q150,74 170,68" fill="none" stroke="rgba(79,209,197,0.2)" stroke-width="1.5"/>
+      </g>
+    </svg>
+  </div>`;
+}
+
+function sceneClimb() {
+  return `<div class="scene-climb">
+    <svg width="200" height="120" viewBox="0 0 200 120">
+      <!-- cliff -->
+      <path d="M120,10 L120,110 L200,110" fill="#1E3A5F" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+      <text x="140" y="55" font-size="7" fill="rgba(255,255,255,0.3)" font-family="Lato">QUÉBEC</text>
+      <text x="140" y="65" font-size="7" fill="rgba(255,255,255,0.3)" font-family="Lato">FORTRESS</text>
+      <!-- climbing British stickmen -->
+      <g class="climber" style="animation: floatUp 2.5s ease infinite;">
+        <circle cx="110" cy="60" r="5" fill="#FF6464"/>
+        <line x1="110" y1="65" x2="110" y2="82" stroke="#FF6464" stroke-width="2" stroke-linecap="round"/>
+        <line x1="110" y1="82" x2="104" y2="95" stroke="#FF6464" stroke-width="2" stroke-linecap="round"/>
+        <line x1="110" y1="82" x2="116" y2="95" stroke="#FF6464" stroke-width="2" stroke-linecap="round"/>
+        <line x1="110" y1="70" x2="118" y2="60" stroke="#FF6464" stroke-width="2" stroke-linecap="round"/>
+        <line x1="110" y1="70" x2="102" y2="78" stroke="#FF6464" stroke-width="2" stroke-linecap="round"/>
+      </g>
+      <g class="climber" style="animation: floatUp 2.5s ease infinite 0.8s;">
+        <circle cx="100" cy="78" r="5" fill="#FF6464"/>
+        <line x1="100" y1="83" x2="100" y2="98" stroke="#FF6464" stroke-width="2" stroke-linecap="round"/>
+        <line x1="100" y1="98" x2="94" y2="108" stroke="#FF6464" stroke-width="2" stroke-linecap="round"/>
+        <line x1="100" y1="98" x2="106" y2="108" stroke="#FF6464" stroke-width="2" stroke-linecap="round"/>
+        <line x1="100" y1="88" x2="108" y2="78" stroke="#FF6464" stroke-width="2" stroke-linecap="round"/>
+        <line x1="100" y1="88" x2="92" y2="95" stroke="#FF6464" stroke-width="2" stroke-linecap="round"/>
+      </g>
+      <!-- rope -->
+      <path d="M113,55 Q115,70 108,85 Q103,95 105,108" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="3,3"/>
+      <!-- French guard on top, confused -->
+      <g style="animation: bobble 1s ease infinite;">
+        <circle cx="135" cy="6" r="5" fill="#5B8DEF"/>
+        <line x1="135" y1="11" x2="135" y2="25" stroke="#5B8DEF" stroke-width="2" stroke-linecap="round"/>
+        <text x="142" y="10" font-size="9" fill="rgba(255,255,255,0.6)">?!</text>
+      </g>
+      <!-- moon -->
+      <circle cx="30" cy="20" r="12" fill="rgba(255,255,255,0.06)"/>
+      <circle cx="34" cy="17" r="10" fill="#0B1F33"/>
+      <text x="5" y="110" font-size="7" fill="rgba(255,255,255,0.2)" font-family="Lato">*3 AM vibes*</text>
+    </svg>
+  </div>`;
+}
+
+function scenePontiac() {
+  return `<div class="scene-pontiac">
+    <svg width="200" height="90" viewBox="0 0 200 90">
+      <!-- Pontiac (angry, big) -->
+      <g class="angry-chief" style="animation: bobble 0.5s ease infinite; transform-origin: 60px 45px;">
+        <circle cx="60" cy="15" r="9" fill="var(--teal-core)"/>
+        <!-- feather -->
+        <line x1="60" y1="6" x2="60" y2="-2" stroke="var(--aqua-light)" stroke-width="2"/>
+        <path d="M57,-2 Q60,-8 63,-2" fill="var(--aqua-light)"/>
+        <line x1="60" y1="24" x2="60" y2="55" stroke="var(--teal-core)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="55" x2="48" y2="78" stroke="var(--teal-core)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="55" x2="72" y2="78" stroke="var(--teal-core)" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- raised fist -->
+        <line x1="60" y1="35" x2="42" y2="20" stroke="var(--teal-core)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="35" x2="78" y2="22" stroke="var(--teal-core)" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- angry speech -->
+        <text x="85" y="18" font-size="11" fill="#FFB432" font-family="Lato" font-weight="700">NOT COOL</text>
+        <text x="85" y="30" font-size="8" fill="rgba(255,255,255,0.4)" font-family="Lato">— Pontiac, probably</text>
+      </g>
+      <!-- fleeing British stickman -->
+      <g style="animation: runCycle 0.4s ease infinite;">
+        <circle cx="160" cy="40" r="6" fill="#FF6464"/>
+        <line x1="160" y1="46" x2="160" y2="62" stroke="#FF6464" stroke-width="2" stroke-linecap="round"/>
+        <line x1="160" y1="62" x2="152" y2="78" stroke="#FF6464" stroke-width="2" stroke-linecap="round"/>
+        <line x1="160" y1="62" x2="168" y2="78" stroke="#FF6464" stroke-width="2" stroke-linecap="round"/>
+        <line x1="160" y1="50" x2="170" y2="42" stroke="#FF6464" stroke-width="2" stroke-linecap="round"/>
+        <line x1="160" y1="50" x2="170" y2="56" stroke="#FF6464" stroke-width="2" stroke-linecap="round"/>
+        <text x="170" y="38" font-size="8" fill="rgba(255,255,255,0.4)">😰</text>
+      </g>
+    </svg>
+  </div>`;
+}
+
+function sceneHandshake() {
+  return `<div class="scene-peace">
+    <svg width="200" height="80" viewBox="0 0 200 80">
+      <!-- French stick -->
+      <circle cx="50" cy="12" r="7" fill="#5B8DEF"/>
+      <line x1="50" y1="19" x2="50" y2="48" stroke="#5B8DEF" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="50" y1="48" x2="40" y2="70" stroke="#5B8DEF" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="50" y1="48" x2="60" y2="70" stroke="#5B8DEF" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="50" y1="30" x2="35" y2="42" stroke="#5B8DEF" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- reaching arm -->
+      <line x1="50" y1="30" x2="80" y2="35" stroke="#5B8DEF" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- British stick -->
+      <circle cx="150" cy="12" r="7" fill="#FF6464"/>
+      <line x1="150" y1="19" x2="150" y2="48" stroke="#FF6464" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="150" y1="48" x2="140" y2="70" stroke="#FF6464" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="150" y1="48" x2="160" y2="70" stroke="#FF6464" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="150" y1="30" x2="165" y2="42" stroke="#FF6464" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- reaching arm -->
+      <line x1="150" y1="30" x2="120" y2="35" stroke="#FF6464" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- handshake area -->
+      <g class="waver" style="animation: wave 1.5s ease infinite; transform-origin: 100px 35px;">
+        <circle cx="100" cy="35" r="8" fill="none" stroke="var(--teal-core)" stroke-width="1.5" stroke-dasharray="3,3"/>
+        <text x="88" y="38" font-size="10" fill="var(--teal-core)">🤝</text>
+      </g>
+      <!-- document below -->
+      <rect x="82" y="52" width="36" height="22" rx="3" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+      <text x="86" y="63" font-size="5" fill="rgba(255,255,255,0.3)" font-family="Lato">TREATY OF</text>
+      <text x="90" y="70" font-size="5" fill="rgba(255,255,255,0.3)" font-family="Lato">PARIS</text>
+    </svg>
+  </div>`;
+}
+
+function sceneBilingual() {
+  return `<div class="scene-peace">
+    <svg width="240" height="90" viewBox="0 0 240 90">
+      <!-- French-Canadian stick -->
+      <circle cx="60" cy="15" r="8" fill="#5B8DEF"/>
+      <line x1="60" y1="23" x2="60" y2="52" stroke="#5B8DEF" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="60" y1="52" x2="48" y2="75" stroke="#5B8DEF" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="60" y1="52" x2="72" y2="75" stroke="#5B8DEF" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="60" y1="34" x2="45" y2="46" stroke="#5B8DEF" stroke-width="2.5" stroke-linecap="round"/>
+      <g class="waver" style="animation: wave 2s ease infinite; transform-origin: 60px 34px;">
+        <line x1="60" y1="34" x2="78" y2="22" stroke="#5B8DEF" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+      <!-- speech bubble FR -->
+      <rect x="30" y="0" width="55" height="14" rx="4" fill="rgba(91,141,239,0.15)" stroke="#5B8DEF" stroke-width="0.5"/>
+      <text x="35" y="10" font-size="7" fill="#5B8DEF" font-family="Lato" font-weight="700">Bonjour!</text>
+      <!-- British-Canadian stick -->
+      <circle cx="180" cy="15" r="8" fill="#FF6464"/>
+      <line x1="180" y1="23" x2="180" y2="52" stroke="#FF6464" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="180" y1="52" x2="168" y2="75" stroke="#FF6464" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="180" y1="52" x2="192" y2="75" stroke="#FF6464" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="180" y1="34" x2="195" y2="46" stroke="#FF6464" stroke-width="2.5" stroke-linecap="round"/>
+      <g class="waver" style="animation: wave 2s ease infinite 0.5s; transform-origin: 180px 34px;">
+        <line x1="180" y1="34" x2="162" y2="22" stroke="#FF6464" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+      <!-- speech bubble EN -->
+      <rect x="155" y="0" width="55" height="14" rx="4" fill="rgba(255,100,100,0.15)" stroke="#FF6464" stroke-width="0.5"/>
+      <text x="167" y="10" font-size="7" fill="#FF6464" font-family="Lato" font-weight="700">Hello!</text>
+      <!-- maple leaf in center -->
+      <text x="112" y="50" font-size="24" text-anchor="middle">🍁</text>
+      <text x="80" y="85" font-size="7" fill="rgba(255,255,255,0.3)" font-family="Lato">*bilingualism has entered the chat*</text>
+    </svg>
+  </div>`;
+}
+
+function sceneFortress() {
+  return `<div class="scene-climb">
+    <svg width="220" height="100" viewBox="0 0 220 100">
+      <!-- cliff/fortress -->
+      <rect x="60" y="10" width="100" height="60" rx="4" fill="#1E3A5F" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+      <!-- battlements -->
+      <rect x="60" y="6" width="15" height="8" fill="#1E3A5F"/>
+      <rect x="85" y="6" width="15" height="8" fill="#1E3A5F"/>
+      <rect x="110" y="6" width="15" height="8" fill="#1E3A5F"/>
+      <rect x="135" y="6" width="15" height="8" fill="#1E3A5F"/>
+      <!-- gate -->
+      <rect x="95" y="45" width="30" height="25" rx="15 15 0 0" fill="rgba(0,0,0,0.3)"/>
+      <!-- label -->
+      <text x="82" y="38" font-size="8" fill="rgba(255,255,255,0.4)" font-family="Lato" font-weight="700">QUÉBEC</text>
+      <!-- French flag -->
+      <line x1="110" y1="10" x2="110" y2="-2" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+      <rect x="112" y="-2" width="12" height="7" rx="1" fill="#5B8DEF" opacity="0.7"/>
+      <!-- river below -->
+      <path d="M0,80 Q40,75 80,80 Q120,85 160,80 Q200,75 220,80" fill="none" stroke="rgba(79,209,197,0.2)" stroke-width="2"/>
+      <text x="5" y="93" font-size="7" fill="rgba(79,209,197,0.3)" font-family="Lato">~ St. Lawrence River ~</text>
+      <!-- tiny guard stick -->
+      <g style="animation: bobble 1.5s ease infinite;">
+        <circle cx="75" cy="24" r="3" fill="#5B8DEF"/>
+        <line x1="75" y1="27" x2="75" y2="38" stroke="#5B8DEF" stroke-width="1.5" stroke-linecap="round"/>
+      </g>
+      <g style="animation: bobble 1.5s ease infinite 0.5s;">
+        <circle cx="145" cy="24" r="3" fill="#5B8DEF"/>
+        <line x1="145" y1="27" x2="145" y2="38" stroke="#5B8DEF" stroke-width="1.5" stroke-linecap="round"/>
+      </g>
+      <!-- speech -->
+      <text x="160" y="30" font-size="6" fill="rgba(255,255,255,0.3)" font-family="Lato">"good luck getting up here lol"</text>
+    </svg>
+  </div>`;
+}
+
+function sceneDeport() {
+  return `<div class="scene-deport">
+    <svg width="220" height="90" viewBox="0 0 220 90">
+      <!-- burning house -->
+      <g style="animation: bobble 3s ease infinite;">
+        <rect x="10" y="40" width="40" height="30" rx="2" fill="#1E3A5F" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+        <polygon points="10,40 30,22 50,40" fill="#1E3A5F" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+        <!-- flames -->
+        <text x="18" y="35" font-size="14">🔥</text>
+        <text x="30" y="28" font-size="10" style="animation: bobble 0.5s ease infinite;">🔥</text>
+      </g>
+      <!-- sad Acadian family walking away -->
+      <g class="sad-stick" style="animation: bobble 1s ease infinite;">
+        <circle cx="90" cy="30" r="6" fill="rgba(255,255,255,0.5)"/>
+        <line x1="90" y1="36" x2="90" y2="58" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="90" y1="58" x2="82" y2="76" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="90" y1="58" x2="98" y2="76" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="90" y1="42" x2="78" y2="52" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="90" y1="42" x2="102" y2="52" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/>
+      </g>
+      <!-- small child stick -->
+      <g class="sad-stick" style="animation: bobble 1s ease infinite 0.3s;">
+        <circle cx="115" cy="42" r="4" fill="rgba(255,255,255,0.4)"/>
+        <line x1="115" y1="46" x2="115" y2="60" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="115" y1="60" x2="110" y2="72" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="115" y1="60" x2="120" y2="72" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- holding parent's hand -->
+        <line x1="115" y1="50" x2="102" y2="52" stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-dasharray="2,2"/>
+      </g>
+      <!-- arrow pointing to ship -->
+      <text x="130" y="55" font-size="16" fill="rgba(255,255,255,0.2)">→</text>
+      <!-- tiny ship -->
+      <g style="animation: shipRock 2s ease infinite;">
+        <path d="M155,55 Q160,65 175,65 Q190,65 195,55 Z" fill="#1E3A5F" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+        <line x1="175" y1="55" x2="175" y2="38" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+        <path d="M177,40 Q185,48 177,55" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+      </g>
+      <text x="70" y="86" font-size="6" fill="rgba(255,255,255,0.25)" font-family="Lato">this was not okay. at all.</text>
+    </svg>
+  </div>`;
+}
+
+// ─── DATA ───
+
+const levels = [
+  {
+    num: 1,
+    title: "The Superpowers",
+    desc: "Who ran the world in the 1700s?",
+    scene: sceneBattle,
+    cards: [
+      {
+        tag: "fact", tagLabel: "Key Fact",
+        title: "What even is a superpower?",
+        body: "A country so powerful it dominates the entire world stage. Think of the US today — they've got the influence, the military, and the economy to have impact everywhere. That's the vibe.",
+        analogy: "🎮 It's like the player who grabbed every power-up in a battle royale — everyone else just has to deal with them."
+      },
+      {
+        tag: "fact", tagLabel: "Key Fact",
+        title: "France 🇫🇷 vs England 🇬🇧 — the 1700s superpowers",
+        body: "These two had colonies EVERYWHERE: the Americas, India, Africa, the Caribbean. Each one wanted more territory, more resources, more power. It was basically a global beef that lasted centuries.",
+        analogy: "⚔️ Imagine two content creators fighting over the same audience but with actual armies. That's the energy."
+      }
+    ]
+  },
+  {
+    num: 2,
+    title: "The Seven Years' War",
+    desc: "A worldwide conflict for control",
+    scene: sceneBattle,
+    cards: [
+      {
+        tag: "fact", tagLabel: "Key Fact",
+        title: "Why did the war start?",
+        body: "Both superpowers wanted more territory. The Seven Years' War broke out everywhere they had colonies: North America, Europe, India, Caribbean, and Africa. Basically, if France and England both had a flag there, it was a warzone.",
+        analogy: "🌍 It's literally a World War before the term existed — battles on 5 continents at the same time. Pretty wild honestly."
+      },
+      {
+        tag: "perspective", tagLabel: "Two Sides",
+        title: "Two versions of the same story",
+        bodyHtml: `<p style="margin-bottom:0.8rem;"><strong style="color:var(--aqua-light)">🇫🇷 French side:</strong> By 1750, people born in New France called themselves <em>Canadiens</em>, not Europeans. This was their HOME. They were born here. France sent soldiers to protect them.</p>
+        <p><strong style="color:var(--aqua-light)">🇬🇧 English side:</strong> The 13 colonies had a bigger population and were running out of land. New France was blocking their access to the interior and the fur trade with Indigenous nations. They also wanted the St. Lawrence River and the fisheries. Basically: "Move, you're in the way."</p>`,
+        analogy: "🏠 The French say \"this is our home.\" The English say \"we need more space.\" Both have their reasons. Neither is backing down."
+      }
+    ]
+  },
+  {
+    num: 3,
+    title: "Québec — The Fortress",
+    desc: "The most important city in New France",
+    scene: sceneFortress,
+    cards: [
+      {
+        tag: "fact", tagLabel: "Key Fact",
+        title: "Québec in 1750",
+        body: "Over 8,000 people — the biggest city in New France. It was actually two cities in one: the Upper Town (a fortress on top of a cliff — very dramatic) and the Lower Town (a port with shops and workers at the river's edge).",
+        analogy: "🏰 Think of a video game castle — the top is the protected zone, the bottom is the village you need to defend. Classic setup."
+      },
+      {
+        tag: "key", tagLabel: "Remember This",
+        title: "The gateway to the entire continent",
+        body: "Québec controlled access to the St. Lawrence River — THE main route into the continent. Whoever held Québec, held Canada. Full stop.",
+        analogy: "🚪 It's literally the spawn point of the server. Lose it, and you lose the game. That's how important it was."
+      }
+    ]
+  },
+  {
+    num: 4,
+    title: "Acadia & The Great Upheaval",
+    desc: "One of the darkest chapters in Canadian history",
+    scene: sceneDeport,
+    cards: [
+      {
+        tag: "fact", tagLabel: "Key Fact",
+        title: "Who were the Acadians?",
+        body: "Descendants of French settlers, living near the Bay of Fundy since the 1600s. They had built their own identity — French-speaking, Catholic, intermarried with Mi'kmaq people, living off fishing and farming. They weren't really French OR English anymore — they were Acadian. Their own thing.",
+      },
+      {
+        tag: "fact", tagLabel: "Key Fact",
+        title: "Under British control",
+        body: "In 1710, the British took Acadia and renamed it Nova Scotia. But the Acadians were still there, still French-speaking and Catholic. Governor Charles Lawrence gave them an ultimatum: swear an oath of loyalty to England, or lose your land. The Acadians wanted to stay neutral — Switzerland vibes. But that wasn't an option anymore.",
+      },
+      {
+        tag: "consequence", tagLabel: "Impact",
+        title: "The Great Upheaval (1755)",
+        body: "Lawrence ordered the Acadians expelled. Soldiers rounded up families, separated parents from children, burned their houses, destroyed their farms. The Acadians were loaded onto ships and scattered to New England, the Caribbean, France, or Louisiana. Many died from disease, starvation, or drowning during the voyages. This was ethnic cleansing.",
+        analogy: "💔 Imagine being forced out of your home, your family torn apart, everything you built burned to the ground. That's exactly what happened to thousands of real people. Not ancient history vibes — real human tragedy."
+      }
+    ]
+  },
+  {
+    num: 5,
+    title: "The Fall of New France",
+    desc: "Louisbourg → Québec → Plains of Abraham",
+    scene: sceneClimb,
+    cards: [
+      {
+        tag: "fact", tagLabel: "Key Fact",
+        title: "Louisbourg falls (1758)",
+        body: "After deporting the Acadians, the British pushed forward. Louisbourg controlled access to the St. Lawrence. The British set up a siege — blocked the port, cut off supplies. No reinforcements could get through. Without resources, the French lost. GG.",
+        analogy: "🚫 Cut the supply lines in any strategy game and your opponent is done. Same energy."
+      },
+      {
+        tag: "key", tagLabel: "Remember This",
+        title: "The Battle of Québec — Wolfe vs Montcalm",
+        bodyHtml: `<p style="margin-bottom:0.8rem;"><strong style="color:var(--aqua-light)">Wolfe (🇬🇧)</strong>: 200 ships, 9,000 soldiers. He HAS to take Québec before winter or the St. Lawrence freezes and his fleet is stuck like a Costco parking lot in December.</p>
+        <p><strong style="color:var(--aqua-light)">Montcalm (🇫🇷)</strong>: 16,000 soldiers and a stone fortress. His strategy: just wait. Winter is coming and time is on his side. Classic turtle defense.</p>`,
+        analogy: "⏱️ It's a race against the clock for Wolfe. Montcalm just has to survive. The timer is the real enemy."
+      },
+      {
+        tag: "consequence", tagLabel: "The Decisive Moment",
+        title: "The Plains of Abraham (Sept 12, 1759)",
+        body: "Wolfe finds a weak spot. On September 12th, his soldiers climb a steep path up the cliff IN THE DARK. At dawn, the French look out and see the entire British army just... standing there on the plains. Surprise! Montcalm sends 6,000 soldiers. The battle lasts only 15 MINUTES: over 1,300 dead. The British win, but BOTH Wolfe AND Montcalm die. The most brutal battle ever fought on Canadian soil.",
+        analogy: "⚡ 15 minutes. That's one episode of a sitcom. And it changed the entire future of Canada. Both commanders speedran their own deaths."
+      }
+    ]
+  },
+  {
+    num: 6,
+    title: "Indigenous Nations & Pontiac",
+    desc: "The forgotten allies and their resistance",
+    scene: scenePontiac,
+    cards: [
+      {
+        tag: "fact", tagLabel: "Key Fact",
+        title: "During the war",
+        body: "Most Indigenous nations fought FOR the French, thanks to alliances built through the fur trade over many decades. But when the peace treaty was signed between France and England? Indigenous peoples weren't considered. Weren't invited. Weren't even mentioned. Just... left out.",
+        analogy: "🤝 You carry your teammate to victory in the tournament, and when they get the trophy, they don't even mention your name. That's basically what happened."
+      },
+      {
+        tag: "key", tagLabel: "Remember This",
+        title: "Pontiac's War (1763)",
+        body: "Pontiac, chief of the Odawa, was FURIOUS. He united several Indigenous nations to fight together and push the British out of the Ohio River Valley. They won several battles around Detroit and Lake Erie. But the French help he expected never came, and when British reinforcements arrived, the Indigenous forces were overwhelmed. A brave resistance that the textbooks barely mention.",
+      }
+    ]
+  },
+  {
+    num: 7,
+    title: "After the War — Now What?",
+    desc: "The Treaty of Paris and three options",
+    scene: sceneHandshake,
+    cards: [
+      {
+        tag: "fact", tagLabel: "Key Fact",
+        title: "The Treaty of Paris (1763)",
+        body: "The wars in North America ended in 1760, but France and England kept fighting elsewhere until 1763. The Treaty of Paris gave almost ALL of North America to Britain. France kept only the tiny islands of Saint-Pierre and Miquelon. From an empire to... two rocks in the ocean. Rough.",
+      },
+      {
+        tag: "perspective", tagLabel: "The Big Dilemma",
+        title: "Britain's three options",
+        bodyHtml: `<ul>
+          <li><strong style="color:#FF6464">Eviction</strong> — Remove everyone who isn't English (like they did with the Acadians). Nuclear option.</li>
+          <li><strong style="color:#FFB432">Assimilation</strong> — Everyone can stay, but must adopt British culture, language, and religion. "Be like us or else."</li>
+          <li><strong style="color:var(--teal-core)">Accommodation</strong> — Everyone can stay with their own cultures, religions, and languages. The chill option.</li>
+        </ul>`,
+        analogy: "🎮 When you conquer a territory in a strategy game, you gotta decide: destroy, convert, or integrate? Each has consequences."
+      }
+    ]
+  },
+  {
+    num: 8,
+    title: "The Birth of Bilingualism",
+    desc: "From the Royal Proclamation to the Quebec Act",
+    scene: sceneBilingual,
+    cards: [
+      {
+        tag: "fact", tagLabel: "Key Fact",
+        title: "The Royal Proclamation of 1763",
+        body: "King George III chose assimilation — British laws and institutions imposed on Quebec. BUT Pontiac's War showed the British they had to listen to Indigenous peoples. The Proclamation reserved territory for Indigenous nations and banned European settlement there. The territory was still pretty small though.",
+      },
+      {
+        tag: "key", tagLabel: "Exam Point",
+        title: "The Quebec Act (1774) — Bilingualism begins",
+        body: "Assimilation wasn't working. The French-Canadian identity was too strong — you can't force 70,000 people to change their language, culture, and religion just because you won a war. So the British passed the Quebec Act: Canadians keep their language and traditions. This is THE foundation of Canadian bilingualism. This is why Canada is the way it is today.",
+        analogy: "🇨🇦 This is literally why we have French on our cereal boxes. French-Canadian identity was simply too strong to erase. Respect."
+      },
+      {
+        tag: "consequence", tagLabel: "Note This",
+        title: "Not everyone was included",
+        body: "The Quebec Act recognized the rights of French and English Canadians, but Indigenous peoples did NOT receive the same rights or power. A pattern that unfortunately continues throughout Canadian history. Important to remember.",
+      }
+    ]
+  }
+];
+
+const quizQuestions = [
+  {
+    q: "What is a superpower?",
+    opts: ["A country with a big population", "A country that dominates the world stage", "A country with the biggest territory", "A country with the best army"],
+    correct: 1,
+    explain: "A superpower has the influence, military AND economy to dominate globally — not just one of those things."
+  },
+  {
+    q: "Who were the superpowers in the 1700s?",
+    opts: ["Spain and Portugal", "France and England", "The US and Russia", "France and Germany"],
+    correct: 1,
+    explain: "France and England had colonies everywhere and were fighting for world domination. Classic rivalry."
+  },
+  {
+    q: "Why did the English want New France's territory?",
+    opts: ["Gold and diamonds", "Land, fur trade access, and the St. Lawrence", "To build factories", "To ally with the French"],
+    correct: 1,
+    explain: "The 13 colonies were running out of land, and New France was blocking access to the fur trade and the St. Lawrence River."
+  },
+  {
+    q: "Why was Québec City strategically important?",
+    opts: ["Best farmland in the area", "It controlled access to the St. Lawrence River", "Closest to Europe", "Had the largest army"],
+    correct: 1,
+    explain: "Québec controlled the gateway to the continent via the St. Lawrence. Lose it = lose Canada."
+  },
+  {
+    q: "Who were the Acadians?",
+    opts: ["English soldiers stationed in Acadia", "Spanish colonists", "Descendants of French settlers with a distinct identity", "Dutch merchants"],
+    correct: 2,
+    explain: "The Acadians were descendants of French settlers since the 1600s, with their own unique culture blended with the Mi'kmaq. Their own vibe entirely."
+  },
+  {
+    q: "What did Charles Lawrence demand from the Acadians?",
+    opts: ["Pay more taxes", "Swear an oath of loyalty to England", "Leave North America", "Convert to Protestantism"],
+    correct: 1,
+    explain: "Lawrence gave an ultimatum: swear loyalty or lose your land. The Acadians just wanted to stay neutral. Nope."
+  },
+  {
+    q: "What was the Great Upheaval?",
+    opts: ["A big Acadian festival", "The forced expulsion of Acadians from Nova Scotia", "A battle between France and England", "A peace treaty"],
+    correct: 1,
+    explain: "Soldiers separated families, burned houses, and deported Acadians by ship. Many died during the voyages. Dark chapter."
+  },
+  {
+    q: "How did the British defeat Louisbourg?",
+    opts: ["A nighttime surprise attack", "A siege that cut off all supplies", "Negotiating with the French", "Buying the fortress"],
+    correct: 1,
+    explain: "They blocked the port, preventing reinforcements and supplies. No resources = no chance. Classic siege."
+  },
+  {
+    q: "What was Montcalm's strategy to defend Québec?",
+    opts: ["Attack the British head-on", "Wait for winter so the St. Lawrence would freeze", "Ask Spain for help", "Abandon the fortress"],
+    correct: 1,
+    explain: "If Montcalm held out until winter, the river would freeze and Wolfe's ships would be trapped. Time was his weapon."
+  },
+  {
+    q: "How long did the Battle of the Plains of Abraham last?",
+    opts: ["3 days", "About 15 minutes", "2 hours", "1 week"],
+    correct: 1,
+    explain: "Only 15 minutes — but with 1,300+ casualties. Both Wolfe and Montcalm died. Speedrun any%."
+  },
+  {
+    q: "Why did most Indigenous nations fight for the French?",
+    opts: ["The French paid more", "Because of fur trade alliances", "The French promised them land", "The English declared war on them"],
+    correct: 1,
+    explain: "The fur trade had built strong alliances between the French and Indigenous nations over decades."
+  },
+  {
+    q: "Who was Pontiac and why did he fight?",
+    opts: ["A French general defending Québec", "Chief of the Odawa who wanted to push out the British", "A British governor of Ohio", "A fur trader"],
+    correct: 1,
+    explain: "Pontiac united several Indigenous nations to fight together and push the British out of the Ohio River Valley."
+  },
+  {
+    q: "What did the Treaty of Paris (1763) give Britain?",
+    opts: ["Only Québec", "Almost all of North America", "Just the Caribbean", "Nothing — it was a draw"],
+    correct: 1,
+    explain: "France lost almost all its North American territory, keeping only the tiny islands of Saint-Pierre and Miquelon."
+  },
+  {
+    q: "What's the difference between assimilation and accommodation?",
+    opts: ["Assimilation = everyone leaves; accommodation = everyone stays", "Assimilation = adopt British culture; accommodation = keep your own culture", "No difference", "Assimilation = keep your rights; accommodation = lose them"],
+    correct: 1,
+    explain: "Assimilation forces everyone to follow one culture. Accommodation lets multiple cultures coexist. Canada eventually chose accommodation."
+  },
+  {
+    q: "Why is the Quebec Act of 1774 important?",
+    opts: ["It expelled the French from Quebec", "It recognized the right of Canadians to keep their language and traditions", "It gave land to Indigenous peoples", "It declared Quebec's independence"],
+    correct: 1,
+    explain: "Assimilation wasn't working. French-Canadian identity was too strong. This is the foundation of Canadian bilingualism."
+  }
+];
+
+// ─── STATE ───
+let xp = 0;
+let currentLevel = 0;
+let currentCard = 0;
+let totalCards = levels.reduce((s,l) => s + l.cards.length, 0);
+let cardsViewed = 0;
+let quizIdx = 0;
+let score = 0;
+let quizAnswered = false;
+
+// ─── HELPERS ───
+function $(id) { return document.getElementById(id); }
+function updateProgress() {
+  const pct = ((cardsViewed) / totalCards) * 100;
+  $('progressFill').style.width = Math.min(pct, 100) + '%';
+  $('topLevelBadge').textContent = 'Level ' + (currentLevel + 1);
+  $('xpCounter').textContent = xp + ' XP';
+}
+
+// ─── SPLASH → LEARN ───
+function startLearn() {
+  $('splash').style.display = 'none';
+  $('topbar').classList.add('visible');
+  $('learn-phase').classList.add('visible');
+  renderLevel();
+}
+
+// ─── RENDER LEVEL ───
+function renderLevel() {
+  const level = levels[currentLevel];
+  const card = level.cards[currentCard];
+  const isFirst = currentLevel === 0 && currentCard === 0;
+  const isLast = currentLevel === levels.length - 1 && currentCard === level.cards.length - 1;
+
+  let html = '';
+  // level header (only on first card of level)
+  if (currentCard === 0) {
+    html += `<div class="level-header">
+      <div class="level-num">Level ${level.num} / ${levels.length}</div>
+      <h2>${level.title}</h2>
+      <p class="level-desc">${level.desc}</p>
+    </div>`;
+    // scene animation
+    if (level.scene) {
+      html += level.scene();
+    }
+  }
+
+  // card
+  html += `<div class="card">
+    <span class="card-tag ${card.tag}">${card.tagLabel}</span>
+    <h3>${card.title}</h3>
+    ${card.bodyHtml ? card.bodyHtml : `<p>${card.body}</p>`}
+    ${card.analogy ? `<div class="analogy-box"><span class="emoji">${card.analogy.slice(0,2)}</span>${card.analogy.slice(2)}</div>` : ''}
+  </div>`;
+
+  // nav
+  const totalCardGlobal = levels.slice(0, currentLevel).reduce((s,l)=>s+l.cards.length,0) + currentCard + 1;
+  html += `<div class="nav-row">
+    <button class="btn-nav" onclick="prevCard()" ${isFirst ? 'style="visibility:hidden"' : ''}>← Back</button>
+    <span class="page-indicator">${totalCardGlobal} / ${totalCards}</span>
+    <button class="btn-nav primary" onclick="nextCard()">${isLast ? 'Start the Quiz →' : 'Next →'}</button>
+  </div>`;
+
+  $('learn-phase').innerHTML = html;
+  updateProgress();
+}
+
+function nextCard() {
+  cardsViewed++;
+  xp += 10;
+  const level = levels[currentLevel];
+  if (currentCard < level.cards.length - 1) {
+    currentCard++;
+    renderLevel();
+  } else if (currentLevel < levels.length - 1) {
+    currentLevel++;
+    currentCard = 0;
+    renderLevel();
+  } else {
+    $('learn-phase').classList.remove('visible');
+    $('learn-phase').style.display = 'none';
+    startQuiz();
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function prevCard() {
+  if (currentCard > 0) {
+    currentCard--;
+    renderLevel();
+  } else if (currentLevel > 0) {
+    currentLevel--;
+    currentCard = levels[currentLevel].cards.length - 1;
+    renderLevel();
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── QUIZ ───
+function startQuiz() {
+  $('quiz-phase').classList.add('visible');
+  $('topLevelBadge').textContent = 'Quiz';
+  $('progressFill').style.width = '100%';
+  renderQuiz();
+}
+
+function renderQuiz() {
+  const q = quizQuestions[quizIdx];
+  let html = '';
+  if (quizIdx === 0) {
+    html += `<div class="quiz-header">
+      <h2>Challenge — Prove You Know It</h2>
+      <p class="quiz-sub">15 questions. Each correct answer = 20 XP. No pressure. (okay maybe a little)</p>
+    </div>`;
+  }
+  html += `<div class="quiz-card" id="qCard">
+    <div class="q-num">Question ${quizIdx + 1} / ${quizQuestions.length}</div>
+    <div class="q-text">${q.q}</div>
+    <div class="options" id="qOpts">
+      ${q.opts.map((o, i) => `<button class="option-btn" onclick="answer(${i})">${o}</button>`).join('')}
+    </div>
+    <div id="qFeedback"></div>
+  </div>`;
+  html += `<div class="nav-row">
+    <span></span>
+    <span class="page-indicator">${quizIdx + 1} / ${quizQuestions.length}</span>
+    <button class="btn-nav primary" id="quizNext" onclick="nextQuiz()" style="visibility:hidden">Next →</button>
+  </div>`;
+  $('quiz-phase').innerHTML = html;
+}
+
+function answer(idx) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const q = quizQuestions[quizIdx];
+  const btns = document.querySelectorAll('#qOpts .option-btn');
+  btns.forEach((b, i) => {
+    b.classList.add('locked');
+    if (i === q.correct) b.classList.add('correct');
+    if (i === idx && idx !== q.correct) b.classList.add('wrong');
+  });
+  const isCorrect = idx === q.correct;
+  if (isCorrect) { score++; xp += 20; }
+  $('xpCounter').textContent = xp + ' XP';
+
+  const funCorrect = ["Nailed it! 🎯", "Big brain energy! 🧠", "Sheeeesh! ✨", "You're actually cracked at this! 💪", "W. Just W. 🏆"];
+  const funWrong = ["Oof, not quite! 😅", "Close but no beaver pelt! 🦫", "The French are disappointed. 🥖", "Montcalm shakes his head. 💀", "Yikes, but you'll get the next one! 🫡"];
+
+  const funMsg = isCorrect
+    ? funCorrect[Math.floor(Math.random() * funCorrect.length)]
+    : funWrong[Math.floor(Math.random() * funWrong.length)];
+
+  $('qFeedback').innerHTML = `<div class="feedback-box ${isCorrect ? 'correct-fb' : 'wrong-fb'}">
+    ${funMsg} ${q.explain}
+  </div>`;
+  document.getElementById('quizNext').style.visibility = 'visible';
+}
+
+function nextQuiz() {
+  quizAnswered = false;
+  quizIdx++;
+  if (quizIdx < quizQuestions.length) {
+    renderQuiz();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    showResults();
+  }
+}
+
+// ─── CONFETTI ───
+function spawnConfetti() {
+  const colors = ['#0FB9B1', '#4FD1C5', '#5B8DEF', '#FFB432', '#FF6464', '#9382FF'];
+  for (let i = 0; i < 50; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti';
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.background = colors[Math.floor(Math.random() * colors.length)];
+    el.style.width = (4 + Math.random() * 8) + 'px';
+    el.style.height = (4 + Math.random() * 8) + 'px';
+    el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    el.style.animation = `confettiFall ${2 + Math.random() * 3}s ease ${Math.random() * 2}s forwards`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 5000);
+  }
+}
+
+// ─── RESULTS ───
+function showResults() {
+  $('quiz-phase').classList.remove('visible');
+  $('quiz-phase').style.display = 'none';
+  $('topbar').classList.remove('visible');
+  $('results-phase').classList.add('visible');
+
+  const pct = Math.round((score / quizQuestions.length) * 100);
+  const circumference = 2 * Math.PI * 58;
+  const offset = circumference - (pct / 100) * circumference;
+
+  let msg, sub, stickScene;
+  if (pct >= 90) {
+    msg = "🔥 Total Mastery";
+    sub = "You're gonna DESTROY that test. Go forth and conquer.";
+    stickScene = `<div style="text-align:center;margin-bottom:1rem;">
+      <svg width="100" height="80" viewBox="0 0 100 80">
+        <circle cx="50" cy="18" r="10" fill="var(--teal-core)"/>
+        <line x1="50" y1="28" x2="50" y2="55" stroke="var(--teal-core)" stroke-width="3" stroke-linecap="round"/>
+        <line x1="50" y1="55" x2="36" y2="75" stroke="var(--teal-core)" stroke-width="3" stroke-linecap="round"/>
+        <line x1="50" y1="55" x2="64" y2="75" stroke="var(--teal-core)" stroke-width="3" stroke-linecap="round"/>
+        <line x1="50" y1="38" x2="32" y2="22" stroke="var(--teal-core)" stroke-width="3" stroke-linecap="round"/>
+        <line x1="50" y1="38" x2="68" y2="22" stroke="var(--teal-core)" stroke-width="3" stroke-linecap="round"/>
+        <text x="26" y="16" font-size="12">🏆</text>
+        <text x="62" y="16" font-size="12">👑</text>
+      </svg>
+    </div>`;
+    spawnConfetti();
+  } else if (pct >= 70) {
+    msg = "💪 Solid";
+    sub = "You know this stuff well. Review the mistakes and you're golden.";
+    stickScene = `<div style="text-align:center;margin-bottom:1rem;">
+      <svg width="80" height="70" viewBox="0 0 80 70">
+        <circle cx="40" cy="15" r="9" fill="var(--aqua-light)"/>
+        <line x1="40" y1="24" x2="40" y2="48" stroke="var(--aqua-light)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="40" y1="48" x2="28" y2="65" stroke="var(--aqua-light)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="40" y1="48" x2="52" y2="65" stroke="var(--aqua-light)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="40" y1="34" x2="58" y2="26" stroke="var(--aqua-light)" stroke-width="2.5" stroke-linecap="round"/>
+        <text x="58" y="22" font-size="14">👍</text>
+      </svg>
+    </div>`;
+  } else if (pct >= 50) {
+    msg = "📖 Almost There";
+    sub = "Re-read the levels where you missed questions, then try again. You got this.";
+    stickScene = '';
+  } else {
+    msg = "🔄 Let's Run It Back";
+    sub = "No stress — redo the speed run and quiz. You'll improve fast. Everyone starts somewhere.";
+    stickScene = `<div style="text-align:center;margin-bottom:1rem;">
+      <svg width="80" height="70" viewBox="0 0 80 70">
+        <circle cx="40" cy="15" r="9" fill="rgba(255,255,255,0.4)"/>
+        <line x1="40" y1="24" x2="40" y2="48" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="40" y1="48" x2="28" y2="65" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="40" y1="48" x2="52" y2="65" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="40" y1="34" x2="25" y2="42" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="40" y1="34" x2="55" y2="28" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round"/>
+        <text x="55" y="24" font-size="10">🤷</text>
+      </svg>
+    </div>`;
+  }
+
+  $('results-phase').innerHTML = `
+    <div class="results-card">
+      ${stickScene}
+      <div class="score-ring">
+        <svg width="140" height="140" viewBox="0 0 140 140">
+          <circle cx="70" cy="70" r="58" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8"/>
+          <circle cx="70" cy="70" r="58" fill="none" stroke="var(--teal-core)" stroke-width="8"
+            stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" stroke-linecap="round"
+            style="transition: stroke-dashoffset 1s ease"/>
+        </svg>
+        <div class="score-text">${pct}%</div>
+      </div>
+      <div class="results-msg">${msg}</div>
+      <p class="results-sub">${score} / ${quizQuestions.length} correct · ${xp} XP total<br>${sub}</p>
+      <div class="results-actions">
+        <button class="btn-nav" onclick="location.reload()">Start Over</button>
+        <button class="btn-nav primary" onclick="reviewMistakes()">Review Material</button>
+      </div>
+    </div>`;
+}
+
+function reviewMistakes() {
+  xp = 0; cardsViewed = 0; currentLevel = 0; currentCard = 0; score = 0; quizIdx = 0;
+  $('results-phase').classList.remove('visible');
+  $('results-phase').style.display = 'none';
+  $('topbar').classList.add('visible');
+  $('learn-phase').style.display = '';
+  $('learn-phase').classList.add('visible');
+  renderLevel();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
